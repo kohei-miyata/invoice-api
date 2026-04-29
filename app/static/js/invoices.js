@@ -17,7 +17,7 @@ function renderInvoices(list) {
   document.getElementById("invoices-count").textContent = list.length;
 
   if (!list.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="7">請求書がありません</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="8">請求書がありません</td></tr>`;
     return;
   }
 
@@ -31,10 +31,11 @@ function renderInvoices(list) {
       <td>${esc(inv.extracted_data?.invoice_number || "—")}</td>
       <td>${formatAmount(inv.extracted_data?.total_amount)}</td>
       <td>${formatDate(inv.created_at)}</td>
+      <td><button class="btn btn-outline btn-sm" onclick="openStorageUrl('${inv.id}')" title="ストレージで開く">${icons.link}</button></td>
       <td>
         <div class="flex gap-2">
           <button class="btn btn-outline btn-sm" onclick="openInvoiceDetail('${inv.id}')">詳細</button>
-          <button class="btn btn-outline btn-sm" onclick="openEditInvoice('${inv.id}')" title="編集">✏️</button>
+          <button class="btn btn-outline btn-sm btn-icon" onclick="openEditInvoice('${inv.id}')" title="編集">${icons.pencil}</button>
           <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')">削除</button>
         </div>
       </td>
@@ -68,12 +69,22 @@ async function handleFiles(files) {
 async function uploadInvoice(file) {
   const fd = new FormData();
   fd.append("file", file);
+  const zone = document.getElementById("upload-zone");
+  const orig = zone.innerHTML;
+  zone.innerHTML = `<span class="spinner"></span> アップロード・AI解析中...`;
+  zone.style.pointerEvents = "none";
   try {
-    await api.uploadInvoice(fd);
-    toast(`「${file.name}」をアップロードしました`, "success");
+    const result = await api.uploadInvoice(fd);
+    toast(`「${file.name}」の解析が完了しました`, "success");
     loadInvoices();
+    renderInvoiceDetail(result);
+    currentInvoiceId = result.id;
+    openModal("invoice-detail-modal");
   } catch (e) {
     toast(`アップロード失敗: ${e.message}`, "error");
+  } finally {
+    zone.innerHTML = orig;
+    zone.style.pointerEvents = "";
   }
 }
 
@@ -130,7 +141,8 @@ function renderInvoiceDetail(inv) {
   `;
 
   const processBtn = document.getElementById("process-btn");
-  processBtn.style.display = (inv.status === "pending") ? "inline-flex" : "none";
+  processBtn.style.display = "inline-flex";
+  processBtn.innerHTML = `${icons.refresh} 再解析`;
 
   const approvalBtn = document.getElementById("detail-approval-btn");
   approvalBtn.onclick = () => { closeModal("invoice-detail-modal"); openCreateApprovalFor(inv.id); };
@@ -150,7 +162,7 @@ async function processCurrentInvoice() {
     toast("AI解析に失敗しました: " + e.message, "error");
   } finally {
     btn.disabled = false;
-    btn.innerHTML = "🤖 AI解析";
+    btn.innerHTML = `${icons.refresh} 再解析`;
   }
 }
 
@@ -193,6 +205,15 @@ async function saveInvoiceEdit() {
     toast("更新に失敗しました: " + e.message, "error");
   } finally {
     btn.disabled = false;
+  }
+}
+
+async function openStorageUrl(id) {
+  try {
+    const data = await api.getDownloadUrl(id);
+    window.open(data.url, "_blank");
+  } catch (e) {
+    toast("ストレージURLの取得に失敗しました: " + e.message, "error");
   }
 }
 

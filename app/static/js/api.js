@@ -47,6 +47,7 @@ const api = {
   updateInvoice:  (id, body)   => request("PUT",    `/api/invoices/${id}`, body),
   deleteInvoice:  (id)         => request("DELETE", `/api/invoices/${id}`),
   processInvoice: (id)         => request("POST",   `/api/invoices/${id}/process`),
+  getDownloadUrl: (id)         => request("GET",    `/api/invoices/${id}/download-url`),
 
   // Approvals
   listApprovals:  (invoiceId)  => request("GET",    "/api/approvals" + (invoiceId ? `?invoice_id=${invoiceId}` : "")),

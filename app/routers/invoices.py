@@ -49,7 +49,7 @@ async def list_invoices(
         return [dict(r) for r in result.mappings().all()]
 
 
-@router.post("", response_model=Invoice, status_code=201)
+@router.post("", response_model=InvoiceWithMatches, status_code=201)
 async def upload_invoice(request: Request, file: UploadFile = File(...)):
     ext = (file.filename or "").rsplit(".", 1)[-1].lower()
     if ext not in ALLOWED_TYPES:
@@ -63,15 +63,30 @@ async def upload_invoice(request: Request, file: UploadFile = File(...)):
 
     try:
         s3_svc.upload_file(content, s3_key, content_type)
-    except Exception:
-        # Fall through without S3 in local dev if credentials not set
-        pass
+    except Exception as e:
+        raise HTTPException(status_code=502, detail=f"Failed to upload file to storage: {e}")
+
+    extracted = await claude_svc.extract_invoice_data(content, ext)
 
     async for session in _db(request):
+        companies_result = await session.execute(
+            text("SELECT id, name, registration_number FROM companies ORDER BY name")
+        )
+        companies = [
+            {"company_id": str(r["id"]), "company_name": r["name"], "registration_number": r["registration_number"]}
+            for r in companies_result.mappings().all()
+        ]
+
+        matches: list = []
+        if companies:
+            matches = await claude_svc.match_company(extracted, companies)
+
+        top_match = matches[0] if matches else None
+
         result = await session.execute(
             text("""
-                INSERT INTO invoices (id, s3_key, original_filename, file_type, status)
-                VALUES (:id, :s3_key, :original_filename, :file_type, 'pending')
+                INSERT INTO invoices (id, s3_key, original_filename, file_type, status, extracted_data, company_id, matching_score)
+                VALUES (:id, :s3_key, :original_filename, :file_type, 'processed', CAST(:extracted AS jsonb), :company_id, :score)
                 RETURNING *
             """),
             {
@@ -79,10 +94,14 @@ async def upload_invoice(request: Request, file: UploadFile = File(...)):
                 "s3_key": s3_key,
                 "original_filename": file.filename,
                 "file_type": ext,
+                "extracted": json.dumps(extracted, ensure_ascii=False),
+                "company_id": top_match["company_id"] if top_match and top_match["score"] >= 0.5 else None,
+                "score": top_match["score"] if top_match else None,
             },
         )
         await session.commit()
-        return dict(result.mappings().one())
+        invoice = dict(result.mappings().one())
+        return {**invoice, "match_candidates": matches}
 
 
 @router.get("/{invoice_id}", response_model=Invoice)
@@ -184,8 +203,8 @@ async def process_invoice(invoice_id: UUID, request: Request):
             )
             resp = s3.get_object(Bucket=settings.S3_BUCKET_NAME, Key=invoice["s3_key"])
             file_content = resp["Body"].read()
-        except Exception:
-            raise HTTPException(status_code=502, detail="Could not retrieve file from storage")
+        except Exception as e:
+            raise HTTPException(status_code=502, detail=f"Could not retrieve file from storage: {e}")
 
         # Claude extraction
         extracted = await claude_svc.extract_invoice_data(file_content, invoice.get("file_type", "pdf"))

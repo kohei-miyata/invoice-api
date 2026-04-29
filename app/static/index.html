@@ -17,13 +17,13 @@
 
   <nav class="sidebar-nav">
     <button class="nav-item" data-page="invoices" onclick="showPage('invoices')">
-      <span class="icon">📄</span> 請求書管理
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span> 請求書管理
     </button>
     <button class="nav-item" data-page="masters" onclick="showPage('masters')">
-      <span class="icon">🏢</span> 会社マスタ
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg></span> 会社マスタ
     </button>
     <button class="nav-item" data-page="approvals" onclick="showPage('approvals')">
-      <span class="icon">✅</span> 承認管理
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg></span> 承認管理
     </button>
   </nav>
 
@@ -41,7 +41,7 @@
 
   <!-- Topbar -->
   <header class="topbar">
-    <h2 id="page-title">📄 請求書管理</h2>
+    <h2 id="page-title" style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg> 請求書管理</h2>
     <div class="actions" id="topbar-actions"></div>
   </header>
 
@@ -55,7 +55,7 @@
       <!-- Upload zone -->
       <div class="card" style="margin-bottom:20px;">
         <div id="upload-zone" class="upload-zone" style="margin:16px;">
-          <div class="icon">☁️</div>
+          <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"/></svg></div>
           <p>ここにファイルをドロップ、または<strong>クリックして選択</strong></p>
           <p style="margin-top:4px;font-size:12px;">PDF / JPG / PNG 対応</p>
           <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" multiple style="display:none" />
@@ -74,7 +74,7 @@
       <div class="card">
         <div class="toolbar">
           <div class="search-box">
-            <span>🔍</span>
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
             <input type="text" placeholder="ファイル名・発行者で検索..." id="invoice-search"
               oninput="filterInvoices()" />
           </div>
@@ -86,7 +86,7 @@
             <option value="rejected">却下</option>
           </select>
           <div class="spacer"></div>
-          <button class="btn btn-outline" onclick="loadInvoices()">🔄 更新</button>
+          <button class="btn btn-outline" onclick="loadInvoices()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg> 更新</button>
         </div>
 
         <div class="table-wrap">
@@ -99,6 +99,7 @@
                 <th>請求書番号</th>
                 <th>合計金額</th>
                 <th>登録日</th>
+                <th>ストレージ</th>
                 <th>操作</th>
               </tr>
             </thead>
@@ -125,7 +126,7 @@
       <div class="card">
         <div class="toolbar">
           <div class="search-box">
-            <span>🔍</span>
+            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
             <input type="text" placeholder="会社名・登録番号で検索..." id="master-search"
               oninput="filterMasters()" />
           </div>
@@ -174,7 +175,7 @@
             <option value="rejected">却下</option>
           </select>
           <div class="spacer"></div>
-          <button class="btn btn-outline" onclick="loadApprovals()">🔄 更新</button>
+          <button class="btn btn-outline" onclick="loadApprovals()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"/></svg> 更新</button>
           <button class="btn btn-primary" onclick="openCreateApproval()">＋ 承認依頼作成</button>
         </div>
 
@@ -211,13 +212,13 @@
   <div class="modal" style="max-width:680px;">
     <div class="modal-header">
       <h3 id="detail-title">請求書詳細</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('invoice-detail-modal')">✕</button>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('invoice-detail-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body" id="detail-body"></div>
     <div class="modal-footer">
-      <button class="btn btn-outline" id="detail-approval-btn">✅ 承認依頼作成</button>
+      <button class="btn btn-outline" id="detail-approval-btn"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg> 承認依頼作成</button>
       <button class="btn btn-primary" id="process-btn" onclick="processCurrentInvoice()" style="display:none;">
-        🤖 AI解析
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"/></svg> AI解析
       </button>
       <button class="btn btn-outline" onclick="closeModal('invoice-detail-modal')">閉じる</button>
     </div>
@@ -229,7 +230,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3>請求書 編集</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('edit-invoice-modal')">✕</button>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('edit-invoice-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
       <input type="hidden" id="edit-invoice-id" />
@@ -259,7 +260,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3 id="master-modal-title">会社マスタ 新規登録</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('master-modal')">✕</button>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('master-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
       <form id="master-form" onsubmit="return false;">
@@ -303,7 +304,7 @@
   <div class="modal">
     <div class="modal-header">
       <h3>承認依頼 作成</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('approval-modal')">✕</button>
+      <button class="btn btn-ghost btn-icon" onclick="closeModal('approval-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
     </div>
     <div class="modal-body">
       <div class="form-group">
