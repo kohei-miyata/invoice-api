@@ -232,10 +232,8 @@ async function deleteInvoice(id) {
 
 function statusBadge(status) {
   const map = {
-    pending:   ["badge-pending",   "未処理"],
     processed: ["badge-processed", "解析済"],
     approved:  ["badge-approved",  "承認済"],
-    rejected:  ["badge-rejected",  "却下"],
   };
   const [cls, label] = map[status] || ["badge-default", status];
   return `<span class="badge ${cls}">${label}</span>`;

@@ -41,7 +41,7 @@ class Company(CompanyBase):
 
 class InvoiceBase(BaseModel):
     original_filename: Optional[str] = None
-    status: str = "pending"
+    status: str = "processed"
 
 
 class InvoiceUpdate(BaseModel):
