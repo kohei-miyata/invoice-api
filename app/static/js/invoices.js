@@ -1,10 +1,12 @@
 /* Invoice CRUD + AI processing */
 
-let invoiceList   = [];
-let filteredList  = [];
-let currentPage   = 1;
-let editingInvoice = null;
+let invoiceList      = [];
+let filteredList     = [];
+let currentPage      = 1;
+let editingInvoice   = null;
 let currentInvoiceId = null;
+let pendingUploadFile    = null;
+let pendingOverwriteId   = null;
 const PAGE_SIZE = 20;
 
 /* ── Load / filter ───────────────────────────────────────────── */
@@ -175,6 +177,45 @@ async function handleFiles(files) {
 }
 
 async function uploadInvoice(file) {
+  const existing = invoiceList.find(inv => inv.original_filename === file.name);
+  if (existing) {
+    pendingUploadFile  = file;
+    pendingOverwriteId = existing.id;
+    document.getElementById("overwrite-filename").textContent = file.name;
+    openModal("overwrite-confirm-modal");
+    return;
+  }
+  await doUpload(file);
+}
+
+async function confirmOverwrite() {
+  closeModal("overwrite-confirm-modal");
+  const file = pendingUploadFile;
+  const id   = pendingOverwriteId;
+  pendingUploadFile = null;
+  pendingOverwriteId = null;
+  if (!file || !id) return;
+
+  const btn = document.getElementById("overwrite-confirm-btn");
+  btn.disabled = true;
+  try {
+    await api.deleteInvoice(id);
+  } catch (e) {
+    toast(`既存ファイルの削除に失敗しました: ${e.message}`, "error");
+    btn.disabled = false;
+    return;
+  }
+  btn.disabled = false;
+  await doUpload(file);
+}
+
+function cancelOverwrite() {
+  closeModal("overwrite-confirm-modal");
+  pendingUploadFile  = null;
+  pendingOverwriteId = null;
+}
+
+async function doUpload(file) {
   const fd   = new FormData();
   fd.append("file", file);
   const zone = document.getElementById("upload-zone");
