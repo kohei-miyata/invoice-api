@@ -20,7 +20,7 @@ const icons = {
 
 /* ── Page navigation ────────────────────────────────────────── */
 
-function showPage(name) {
+function showPage(name, pushHistory = true) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("active"));
 
@@ -33,9 +33,19 @@ function showPage(name) {
   };
   document.getElementById("page-title").innerHTML = titles[name] || "";
 
+  if (pushHistory) {
+    const url = name === "invoices" ? "/" : `/?page=${name}`;
+    history.pushState({ page: name }, "", url);
+  }
+
   if (name === "invoices") loadInvoices();
   if (name === "masters")  loadMasters();
 }
+
+window.addEventListener("popstate", e => {
+  const page = e.state?.page || new URLSearchParams(window.location.search).get("page") || "invoices";
+  showPage(page, false);
+});
 
 /* ── Modal helpers ──────────────────────────────────────────── */
 
@@ -93,5 +103,6 @@ document.getElementById("tenant-select").addEventListener("change", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   initUploadZone();
-  showPage("invoices");
+  const page = new URLSearchParams(window.location.search).get("page") || "invoices";
+  showPage(page, false);
 });
