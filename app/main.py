@@ -34,8 +34,8 @@ static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.isdir(static_dir):
     app.mount("/static", StaticFiles(directory=static_dir), name="static")
 
-    @app.get("/")
-    async def serve_index():
+    @app.get("/{full_path:path}")
+    async def serve_spa(full_path: str):
         return FileResponse(os.path.join(static_dir, "index.html"))
 
 

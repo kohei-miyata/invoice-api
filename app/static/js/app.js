@@ -34,8 +34,7 @@ function showPage(name, pushHistory = true) {
   document.getElementById("page-title").innerHTML = titles[name] || "";
 
   if (pushHistory) {
-    const url = name === "invoices" ? "/" : `/?page=${name}`;
-    history.pushState({ page: name }, "", url);
+    history.pushState({ page: name }, "", `/${name}`);
   }
 
   if (name === "invoices") loadInvoices();
@@ -43,7 +42,7 @@ function showPage(name, pushHistory = true) {
 }
 
 window.addEventListener("popstate", e => {
-  const page = e.state?.page || new URLSearchParams(window.location.search).get("page") || "invoices";
+  const page = e.state?.page || window.location.pathname.replace(/^\//, "") || "invoices";
   showPage(page, false);
 });
 
@@ -103,6 +102,6 @@ document.getElementById("tenant-select").addEventListener("change", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   initUploadZone();
-  const page = new URLSearchParams(window.location.search).get("page") || "invoices";
+  const page = window.location.pathname.replace(/^\//, "") || "invoices";
   showPage(page, false);
 });
