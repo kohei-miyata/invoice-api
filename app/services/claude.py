@@ -24,6 +24,7 @@ _EXTRACT_SYSTEM = """あなたは請求書・領収書のデータ抽出専門AI
 
 必ず以下のフィールドを含むJSONのみを返してください（コードブロックや説明文は不要）:
 {
+  "document_type": "文書種別（請求書 or 領収書）",
   "invoice_number": "請求書番号",
   "invoice_date": "発行日 (YYYY-MM-DD形式)",
   "due_date": "支払期限 (YYYY-MM-DD形式)",

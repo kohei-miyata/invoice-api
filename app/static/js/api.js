@@ -41,7 +41,11 @@ const api = {
   deleteCompany:  (id)         => request("DELETE", `/api/masters/${id}`),
 
   // Invoices
-  listInvoices:   (status)     => request("GET",    "/api/invoices" + (status ? `?status=${status}` : "")),
+  listInvoices:   (status, limit = 200) => {
+    const q = new URLSearchParams({ limit: String(limit) });
+    if (status) q.set("status", status);
+    return request("GET", `/api/invoices?${q}`);
+  },
   getInvoice:     (id)         => request("GET",    `/api/invoices/${id}`),
   uploadInvoice:  (formData)   => request("POST",   "/api/invoices", formData, true),
   updateInvoice:  (id, body)   => request("PUT",    `/api/invoices/${id}`, body),
