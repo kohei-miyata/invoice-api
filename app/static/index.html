@@ -91,14 +91,14 @@
               <tr>
                 <th style="width:36px;"><input type="checkbox" id="select-all-check" onchange="toggleSelectAll(this)"></th>
                 <th>ファイル名</th>
-                <th>文書種別</th>
-                <th>ステータス</th>
-                <th>発行者</th>
-                <th>請求書番号</th>
-                <th>合計金額</th>
-                <th>登録日</th>
-                <th>ストレージ</th>
-                <th>操作</th>
+                <th style="min-width:90px;">文書種別</th>
+                <th style="min-width:90px;">ステータス</th>
+                <th style="min-width:120px;">発行者</th>
+                <th style="min-width:110px;">請求書番号</th>
+                <th style="min-width:100px;">合計金額</th>
+                <th style="min-width:90px;">登録日</th>
+                <th style="min-width:70px;">ストレージ</th>
+                <th style="min-width:160px;">操作</th>
               </tr>
             </thead>
             <tbody id="invoices-tbody">
@@ -130,6 +130,11 @@
               oninput="filterMasters()" />
           </div>
           <div class="spacer"></div>
+          <button class="btn btn-outline" onclick="downloadSampleCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> サンプルCSV</button>
+          <label class="btn btn-outline" style="cursor:pointer;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg> CSVインポート
+            <input type="file" id="master-csv-input" accept=".csv" style="display:none" onchange="handleMasterCSVInput(this)">
+          </label>
           <button class="btn btn-primary" onclick="openCreateMaster()">＋ 新規登録</button>
         </div>
 
