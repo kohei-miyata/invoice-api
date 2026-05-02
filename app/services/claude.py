@@ -69,7 +69,14 @@ def _parse_json_response(text: str) -> Any:
     return json.loads(text)
 
 
-async def extract_invoice_data(file_content: bytes, file_type: str) -> dict:
+def _usage(response) -> dict:
+    return {
+        "input_tokens": response.usage.input_tokens,
+        "output_tokens": response.usage.output_tokens,
+    }
+
+
+async def extract_invoice_data(file_content: bytes, file_type: str) -> tuple[dict, dict]:
     client = get_client()
     encoded = base64.standard_b64encode(file_content).decode()
 
@@ -107,10 +114,13 @@ async def extract_invoice_data(file_content: bytes, file_type: str) -> dict:
         messages=[{"role": "user", "content": content}],
     )
 
-    return _parse_json_response(response.content[0].text)
+    data = _parse_json_response(response.content[0].text)
+    if isinstance(data, list):
+        data = data[0] if data else {}
+    return data, _usage(response)
 
 
-async def match_company(extracted_data: dict, companies: list[dict]) -> list[dict]:
+async def match_company(extracted_data: dict, companies: list[dict]) -> tuple[list[dict], dict]:
     client = get_client()
 
     response = await client.messages.create(
@@ -129,4 +139,4 @@ async def match_company(extracted_data: dict, companies: list[dict]) -> list[dic
         ],
     )
 
-    return _parse_json_response(response.content[0].text)
+    return _parse_json_response(response.content[0].text), _usage(response)

@@ -53,18 +53,25 @@ function openModal(id) {
 }
 
 function closeModal(id) {
-  document.getElementById(id)?.classList.remove("open");
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.classList.remove("open");
+  el.dispatchEvent(new CustomEvent("modal:closed"));
 }
 
 document.addEventListener("click", e => {
   if (e.target.classList.contains("modal-overlay")) {
     e.target.classList.remove("open");
+    e.target.dispatchEvent(new CustomEvent("modal:closed"));
   }
 });
 
 document.addEventListener("keydown", e => {
   if (e.key === "Escape") {
-    document.querySelectorAll(".modal-overlay.open").forEach(m => m.classList.remove("open"));
+    document.querySelectorAll(".modal-overlay.open").forEach(m => {
+      m.classList.remove("open");
+      m.dispatchEvent(new CustomEvent("modal:closed"));
+    });
   }
 });
 

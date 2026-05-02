@@ -394,3 +394,202 @@ input[type="checkbox"] {
 .gap-2 { gap: 8px; }
 .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
 .w-full { width: 100%; }
+
+/* ── Upload progress panel ──────────────────────────────────────── */
+.upload-progress-panel {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  width: 380px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.14), 0 2px 8px rgba(0,0,0,.08);
+  z-index: 1500;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(16px) scale(.97);
+  transition: opacity .22s cubic-bezier(.16,1,.3,1), transform .22s cubic-bezier(.16,1,.3,1);
+}
+.upload-progress-panel.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+}
+
+/* Header */
+.progress-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+.progress-panel-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13.5px; font-weight: 600;
+  color: var(--text);
+  flex: 1; min-width: 0;
+}
+.progress-panel-title span[id="progress-title"] {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+/* Progress bar */
+.progress-bar-track {
+  height: 5px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary) 0%, #818cf8 100%);
+  transition: width .4s ease;
+  width: 0%;
+  border-radius: 0 3px 3px 0;
+}
+
+/* Body */
+.progress-panel-body {
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Stats row */
+.progress-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.progress-stat {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-muted);
+}
+.progress-stat .ps-num { font-size: 15px; font-weight: 700; }
+.progress-stat.ps-total  .ps-num { color: var(--text); }
+.progress-stat.ps-ok     .ps-num { color: var(--success); }
+.progress-stat.ps-err    .ps-num { color: var(--danger); }
+.progress-stat-divider { width: 1px; height: 16px; background: var(--border); }
+
+/* Current file */
+.progress-current-wrap {
+  display: flex; align-items: center; gap: 6px;
+  min-height: 20px;
+}
+.progress-current-label {
+  font-size: 11px; font-weight: 600; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: .04em;
+  white-space: nowrap;
+}
+.progress-current {
+  font-size: 12.5px; color: var(--text);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  flex: 1;
+}
+
+/* Log */
+.progress-log {
+  max-height: 130px;
+  overflow-y: auto;
+  display: flex; flex-direction: column; gap: 1px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 6px 4px;
+}
+.progress-log:empty { display: none; }
+.progress-log-item {
+  display: flex; align-items: center; gap: 6px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+  overflow: hidden;
+}
+.progress-log-item .log-icon { flex-shrink: 0; font-size: 11px; width: 14px; text-align: center; }
+.progress-log-item .log-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+.progress-log-item .log-detail { flex-shrink: 0; font-size: 11px; color: var(--text-muted); }
+.progress-log-item.log-success { color: #166534; background: #f0fdf4; }
+.progress-log-item.log-error   { color: #991b1b; background: #fef2f2; }
+.progress-log-item.log-skip    { color: var(--text-muted); font-style: italic; }
+
+/* ── Upload zone choice buttons ─────────────────────────────────── */
+.upload-zone-actions {
+  display: flex;
+  gap: 10px;
+}
+.upload-btn-choice {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s;
+}
+.upload-btn-choice:hover {
+  border-color: var(--primary);
+  background: #ede9fe;
+  color: var(--primary);
+}
+
+/* ── Company tag in invoice list ────────────────────────────────── */
+.company-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11.5px;
+  font-weight: 500;
+  background: #ede9fe;
+  color: var(--primary);
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.company-tag-none {
+  background: var(--bg);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* ── Company incremental search ─────────────────────────────────── */
+.company-search-wrap { position: relative; }
+.company-dropdown {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-top: none;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 12px rgba(0,0,0,.1);
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+  z-index: 200;
+  display: none;
+}
+.company-dropdown li {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 13.5px;
+  border-bottom: 1px solid var(--border);
+}
+.company-dropdown li:last-child { border-bottom: none; }
+.company-dropdown li:hover { background: #ede9fe; color: var(--primary); }
+
+/* ── Detail modal edit section ──────────────────────────────────── */
+.modal-divider { margin: 16px 0; border: none; border-top: 1px solid var(--border); }

@@ -65,6 +65,8 @@ class Invoice(InvoiceBase):
     extracted_data: Optional[Any] = None
     company_id: Optional[UUID] = None
     matching_score: Optional[float] = None
+    ai_input_tokens: int = 0
+    ai_output_tokens: int = 0
     created_at: datetime
     updated_at: datetime
 

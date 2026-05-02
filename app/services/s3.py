@@ -42,3 +42,16 @@ def delete_file(s3_key: str) -> None:
         s3.delete_object(Bucket=settings.S3_BUCKET_NAME, Key=s3_key)
     except ClientError:
         pass
+
+
+def move_file(old_key: str, new_key: str, content_type: str = "application/octet-stream") -> None:
+    """Copy object to new_key then delete old_key."""
+    s3 = get_s3()
+    s3.copy_object(
+        CopySource={"Bucket": settings.S3_BUCKET_NAME, "Key": old_key},
+        Bucket=settings.S3_BUCKET_NAME,
+        Key=new_key,
+        ContentType=content_type,
+        MetadataDirective="REPLACE",
+    )
+    delete_file(old_key)

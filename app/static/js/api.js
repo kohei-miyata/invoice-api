@@ -52,6 +52,7 @@ const api = {
   deleteInvoice:  (id)         => request("DELETE", `/api/invoices/${id}`),
   processInvoice: (id)         => request("POST",   `/api/invoices/${id}/process`),
   getDownloadUrl: (id)         => request("GET",    `/api/invoices/${id}/download-url`),
+  getUsageStats:  ()           => request("GET",    "/api/invoices/usage-stats"),
 
   // Approvals
   listApprovals:  (invoiceId)  => request("GET",    "/api/approvals" + (invoiceId ? `?invoice_id=${invoiceId}` : "")),
