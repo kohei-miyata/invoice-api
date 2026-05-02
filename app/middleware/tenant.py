@@ -13,12 +13,16 @@ class TenantMiddleware(BaseHTTPMiddleware):
         tenant_slug = request.headers.get("X-Tenant-Slug")
 
         if not tenant_slug:
-            # Production: derive from subdomain
+            # Production: derive from subdomain (custom domain only, not AWS/ALB hostnames)
             host = request.headers.get("host", "")
             hostname = host.split(":")[0]  # strip port
             parts = hostname.split(".")
-            if len(parts) >= 3:
+            if len(parts) >= 3 and not hostname.endswith(".amazonaws.com") and not hostname.endswith(".elb.amazonaws.com"):
                 tenant_slug = parts[0]
+
+        if not tenant_slug:
+            # Fallback: use default tenant when no custom domain
+            tenant_slug = "default"
 
         if not tenant_slug:
             return JSONResponse(

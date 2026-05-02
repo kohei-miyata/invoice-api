@@ -16,5 +16,5 @@ AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 async def get_db(tenant_slug: str):
     async with AsyncSessionLocal() as session:
         schema = f"tenant_{tenant_slug}"
-        await session.execute(text(f"SET search_path = {schema}, public"))
+        await session.execute(text(f'SET search_path = "{schema}", public'))
         yield session
