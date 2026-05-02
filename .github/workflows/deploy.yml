@@ -1,101 +1,58 @@
-name: CI / Deploy
+name: Deploy to ECS
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches:
+      - main
 
 env:
   AWS_REGION: ap-northeast-1
   ECR_REPOSITORY: invoice-api
-  ECS_SERVICE: invoice-api-service
-  ECS_CLUSTER: invoice-api-cluster
-  CONTAINER_NAME: api
+  ECS_CLUSTER: invoice-cluster
+  ECS_SERVICE: invoice-api-service-m0vsy377
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: invoices_test
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-
-      - run: pip install -r requirements.txt
-
-      - name: Run migrations
-        env:
-          PGPASSWORD: postgres
-        run: psql -h localhost -U postgres -d invoices_test -f migrations/init.sql
-
-      - name: Lint
-        run: |
-          pip install ruff
-          ruff check app/
-
-  build-and-deploy:
-    needs: test
-    if: github.ref == 'refs/heads/main'
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Login to Amazon ECR
+      - name: Login to ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, push image
-        id: build-image
+      - name: Build and push image
+        id: build
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
-
-      - name: Download ECS task definition
-        run: |
-          aws ecs describe-task-definition --task-definition invoice-api \
-            --query taskDefinition > task-definition.json
-
-      - name: Update ECS task definition with new image
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: task-definition.json
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          IMAGE_URI=$ECR_REGISTRY/$ECR_REPOSITORY:${{ github.sha }}
+          docker build --platform linux/amd64 -t $IMAGE_URI .
+          docker push $IMAGE_URI
+          docker tag $IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
       - name: Deploy to ECS
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-        with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ env.ECS_SERVICE }}
-          cluster: ${{ env.ECS_CLUSTER }}
-          wait-for-service-stability: true
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.ECS_SERVICE }} \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Wait for deployment
+        run: |
+          aws ecs wait services-stable \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --services ${{ env.ECS_SERVICE }} \
+            --region ${{ env.AWS_REGION }}
+          echo "Deployment complete"

@@ -57,6 +57,11 @@ app.include_router(invoices.router)
 app.include_router(masters.router)
 app.include_router(approvals.router)
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
 # Serve frontend
 static_dir = os.path.join(os.path.dirname(__file__), "static")
 if os.path.isdir(static_dir):
@@ -65,11 +70,6 @@ if os.path.isdir(static_dir):
     @app.get("/{full_path:path}")
     async def serve_spa(full_path: str):
         return FileResponse(os.path.join(static_dir, "index.html"))
-
-
-@app.get("/health")
-async def health():
-    return {"status": "ok"}
 
 
 @app.post("/api/tenants/provision")
