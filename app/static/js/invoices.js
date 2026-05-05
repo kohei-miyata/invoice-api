@@ -83,6 +83,7 @@ function finalizeProgressPanel(hadErrors) {
   document.getElementById("progress-bar-fill").style.background = hadErrors
     ? "var(--warning)"
     : "var(--success)";
+  if (!hadErrors) setTimeout(closeProgressPanel, 5000);
 }
 
 
