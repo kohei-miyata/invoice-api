@@ -14,10 +14,17 @@ class TenantMiddleware(BaseHTTPMiddleware):
 
         if not tenant_slug:
             # Production: derive from subdomain (custom domain only, not AWS/ALB hostnames)
+            # Skip known fixed subdomains (e.g. invoice.newopen.site is the app itself, not a tenant)
+            FIXED_SUBDOMAINS = {"invoice"}
             host = request.headers.get("host", "")
             hostname = host.split(":")[0]  # strip port
             parts = hostname.split(".")
-            if len(parts) >= 3 and not hostname.endswith(".amazonaws.com") and not hostname.endswith(".elb.amazonaws.com"):
+            if (
+                len(parts) >= 3
+                and not hostname.endswith(".amazonaws.com")
+                and not hostname.endswith(".elb.amazonaws.com")
+                and parts[0] not in FIXED_SUBDOMAINS
+            ):
                 tenant_slug = parts[0]
 
         if not tenant_slug:
