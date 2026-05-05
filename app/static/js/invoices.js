@@ -20,6 +20,8 @@ let batchFailed  = 0;
 
 /* single-file sequential review queue (used when multiple files are dropped/selected at once) */
 let singleQueue = [];
+/* pre-fetched next result: { file, promise: Promise<{result,companies}|{error}> } */
+let prefetch = null;
 
 function showProgressPanel() {
   const panel = document.getElementById("upload-progress-panel");
@@ -392,6 +394,20 @@ function cancelOverwrite() {
   processNextSingleFile();
 }
 
+function startPrefetch() {
+  if (!singleQueue.length || prefetch) return;
+  const file = singleQueue[0];
+  if (invoiceList.some(inv => inv.original_filename === file.name)) return; // duplicate — needs confirmation first
+  const fd = new FormData();
+  fd.append("file", file);
+  prefetch = {
+    file,
+    promise: Promise.all([api.uploadInvoice(fd), api.listCompanies()])
+      .then(([result, companies]) => ({ result, companies }))
+      .catch(err => ({ error: err.message })),
+  };
+}
+
 async function doUpload(file) {
   const fd = new FormData();
   fd.append("file", file);
@@ -409,6 +425,7 @@ async function doUpload(file) {
     renderInvoiceDetail(result);
     currentInvoiceId = result.id;
     openModal("invoice-detail-modal");
+    startPrefetch();
   } catch (e) {
     batchFailed++;
     addProgressLog(file.name, "error", e.message);
@@ -419,9 +436,52 @@ async function doUpload(file) {
   }
 }
 
-function processNextSingleFile() {
+async function processNextSingleFile() {
   if (!singleQueue.length) return;
   const file = singleQueue.shift();
+
+  if (prefetch && prefetch.file === file) {
+    const p = prefetch.promise;
+    prefetch = null;
+    // Show next modal immediately with loading state while waiting for result
+    document.getElementById("detail-title").textContent = file.name;
+    document.getElementById("detail-body").innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;padding:48px;gap:10px;color:var(--text-muted);">
+        <span class="spinner"></span><span>解析中...</span>
+      </div>`;
+    document.getElementById("detail-doc-type").value = "";
+    document.getElementById("detail-status").value   = "processed";
+    document.getElementById("detail-company-search").value = "";
+    document.getElementById("detail-company-id").value = "";
+    document.getElementById("process-btn").style.display = "none";
+    openModal("invoice-detail-modal");
+    const data = await p;
+    if (data.error) {
+      batchFailed++;
+      addProgressLog(file.name, "error", data.error);
+      updateProgressBar();
+      if (!singleQueue.length) finalizeProgressPanel(true);
+      toast(`アップロード失敗: ${data.error}`, "error");
+      closeModal("invoice-detail-modal");
+      processNextSingleFile();
+      return;
+    }
+    const { result, companies } = data;
+    companiesList = companies;
+    batchDone++;
+    addProgressLog(file.name, "success");
+    updateProgressBar();
+    if (!singleQueue.length) finalizeProgressPanel(batchFailed > 0);
+    toast(`「${file.name}」の解析が完了しました`, "success");
+    loadInvoices();
+    loadUsageStats();
+    renderInvoiceDetail(result);
+    currentInvoiceId = result.id;
+    startPrefetch();
+    return;
+  }
+
+  prefetch = null;
   uploadInvoice(file);
 }
 
