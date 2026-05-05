@@ -344,6 +344,7 @@ async function handleFiles(files) {
   showProgressPanel();
   updateProgressBar();
 
+  startPrefetch(); // start file[1] analysis in parallel while file[0] uploads
   await uploadInvoice(fileArr[0]);
 }
 
@@ -400,12 +401,12 @@ function startPrefetch() {
   if (invoiceList.some(inv => inv.original_filename === file.name)) return; // duplicate — needs confirmation first
   const fd = new FormData();
   fd.append("file", file);
-  prefetch = {
-    file,
-    promise: Promise.all([api.uploadInvoice(fd), api.listCompanies()])
-      .then(([result, companies]) => ({ result, companies }))
-      .catch(err => ({ error: err.message })),
-  };
+  let pending = true;
+  const promise = Promise.all([api.uploadInvoice(fd), api.listCompanies()])
+    .then(([result, companies]) => ({ result, companies }))
+    .catch(err => ({ error: err?.message || String(err) || "エラーが発生しました" }))
+    .finally(() => { pending = false; });
+  prefetch = { file, promise, get pending() { return pending; } };
 }
 
 async function doUpload(file) {
@@ -442,8 +443,10 @@ async function processNextSingleFile() {
 
   if (prefetch && prefetch.file === file) {
     const p = prefetch.promise;
+    const wasPending = prefetch.pending;
     prefetch = null;
-    // Await silently — no blocking loading modal; open result modal when ready
+    if (wasPending) toast(`「${file.name}」を解析中です — 完了後にモーダルを表示します`, "info");
+    // Await silently — open result modal automatically when ready
     const data = await p;
     const errMsg = data?.error || (!data?.result ? "アップロードに失敗しました" : null);
     if (errMsg) {
