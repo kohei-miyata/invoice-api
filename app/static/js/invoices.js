@@ -229,8 +229,7 @@ function renderInvoices() {
       <td class="col-hide-mobile"><button class="btn btn-outline btn-sm" onclick="openStorageUrl('${inv.id}')" title="ストレージで開く">${icons.link}</button></td>
       <td>
         <div class="flex gap-2">
-          <button class="btn btn-outline btn-sm" onclick="openInvoiceDetail('${inv.id}')">詳細</button>
-          <button class="btn btn-outline btn-sm btn-icon" onclick="openEditInvoice('${inv.id}')" title="編集">${icons.pencil}</button>
+          <button class="btn btn-outline btn-sm btn-icon" onclick="openInvoiceDetail('${inv.id}')" title="詳細">${icons.eye}</button>
           <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')">削除</button>
         </div>
       </td>
@@ -589,17 +588,20 @@ function renderInvoiceDetail(inv) {
     });
     el.addEventListener("input", () => {
       el.value = el.value.replace(/[^\d]/g, "");
-      if (id === "di-subtotal" || id === "di-tax-amount") {
-        const sub = Number(document.getElementById("di-subtotal")?.value || 0);
-        const tax = Number(document.getElementById("di-tax-amount")?.value || 0);
-        const totalEl = document.getElementById("di-total-amount");
-        if (totalEl) {
-          const sum = sub + tax;
-          totalEl.value = sum > 0 ? sum.toLocaleString("ja-JP") : "";
-        }
-      }
+      if (id === "di-subtotal" || id === "di-tax-amount") recalcTotal();
     });
   });
+
+  // Auto-fill total on open if missing
+  const totalEl = document.getElementById("di-total-amount");
+  if (totalEl && !totalEl.value) recalcTotal();
+}
+
+function recalcTotal() {
+  const sub = Number((document.getElementById("di-subtotal")?.value || "").replace(/,/g, "")) || 0;
+  const tax = Number((document.getElementById("di-tax-amount")?.value || "").replace(/,/g, "")) || 0;
+  const totalEl = document.getElementById("di-total-amount");
+  if (totalEl) totalEl.value = (sub + tax) > 0 ? (sub + tax).toLocaleString("ja-JP") : "";
 }
 
 async function processCurrentInvoice() {
