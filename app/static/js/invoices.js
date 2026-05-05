@@ -495,23 +495,52 @@ function renderInvoiceDetail(inv) {
 
   const d = inv.extracted_data || {};
   document.getElementById("detail-body").innerHTML = `
-    <div class="detail-grid">
-      <div class="detail-item"><div class="key">UUID</div><div class="val" style="font-size:11px;word-break:break-all;color:var(--text-muted);">${esc(inv.id)}</div></div>
-      <div class="detail-item"><div class="key">文書種別</div><div class="val">${esc(d.document_type || "—")}</div></div>
-      <div class="detail-item"><div class="key">ステータス</div><div class="val">${statusBadge(inv.status)}</div></div>
-      <div class="detail-item"><div class="key">発行日</div><div class="val">${esc(d.invoice_date || "—")}</div></div>
-      <div class="detail-item"><div class="key">支払期限</div><div class="val">${esc(d.due_date || "—")}</div></div>
-      <div class="detail-item"><div class="key">発行者</div><div class="val">${esc(d.vendor_name || "—")}</div></div>
-      <div class="detail-item"><div class="key">登録番号</div><div class="val">${esc(d.vendor_registration_number || "—")}</div></div>
-      <div class="detail-item"><div class="key">宛先</div><div class="val">${esc(d.buyer_name || "—")}</div></div>
-      <div class="detail-item"><div class="key">小計</div><div class="val">${formatAmount(d.subtotal)}</div></div>
-      <div class="detail-item"><div class="key">消費税</div><div class="val">${formatAmount(d.tax_amount)}</div></div>
-      <div class="detail-item"><div class="key">合計金額</div><div class="val" style="font-size:18px;font-weight:700;">${formatAmount(d.total_amount)}</div></div>
-      ${inv.matching_score != null ? `<div class="detail-item"><div class="key">照合スコア</div><div class="val">${(inv.matching_score * 100).toFixed(0)}%</div></div>` : ""}
+    <div class="detail-meta-row">
+      <span class="detail-meta-label">UUID</span>
+      <span class="detail-meta-val">${esc(inv.id)}</span>
+      ${inv.matching_score != null ? `<span class="detail-meta-label" style="margin-left:8px;">照合スコア</span><span class="detail-meta-val">${(inv.matching_score * 100).toFixed(0)}%</span>` : ""}
+    </div>
+    <div class="detail-edit-grid">
+      <div class="form-group">
+        <label>発行日</label>
+        <input type="date" id="di-invoice-date" value="${esc(d.invoice_date || '')}">
+      </div>
+      <div class="form-group">
+        <label>支払期限</label>
+        <input type="date" id="di-due-date" value="${esc(d.due_date || '')}">
+      </div>
+      <div class="form-group">
+        <label>発行者</label>
+        <input type="text" id="di-vendor-name" value="${esc(d.vendor_name || '')}">
+      </div>
+      <div class="form-group">
+        <label>宛先</label>
+        <input type="text" id="di-buyer-name" value="${esc(d.buyer_name || '')}">
+      </div>
+      <div class="form-group">
+        <label>発行者住所</label>
+        <input type="text" id="di-vendor-address" value="${esc(d.vendor_address || '')}">
+      </div>
+      <div class="form-group">
+        <label>登録番号</label>
+        <input type="text" id="di-vendor-reg-num" value="${esc(d.vendor_registration_number || '')}">
+      </div>
+      <div class="form-group">
+        <label>小計</label>
+        <input type="number" id="di-subtotal" value="${d.subtotal ?? ''}">
+      </div>
+      <div class="form-group">
+        <label>消費税</label>
+        <input type="number" id="di-tax-amount" value="${d.tax_amount ?? ''}">
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label>合計金額</label>
+        <input type="number" id="di-total-amount" value="${d.total_amount ?? ''}">
+      </div>
     </div>
     ${(d.line_items || []).length ? `
-      <div style="margin-top:16px;">
-        <div class="key" style="margin-bottom:6px;">明細</div>
+      <div style="margin-bottom:12px;">
+        <div class="detail-meta-label" style="display:block;margin-bottom:6px;">明細</div>
         <table class="line-items-table">
           <thead><tr><th>品目</th><th>数量</th><th>単価</th><th>金額</th></tr></thead>
           <tbody>
@@ -527,7 +556,10 @@ function renderInvoiceDetail(inv) {
         </table>
       </div>
     ` : ""}
-    ${d.notes ? `<div style="margin-top:12px;"><div class="key">備考</div><div class="val" style="margin-top:4px;">${esc(d.notes)}</div></div>` : ""}
+    <div class="form-group" style="margin-bottom:0;">
+      <label>備考</label>
+      <textarea id="di-notes" style="min-height:56px;">${esc(d.notes || '')}</textarea>
+    </div>
   `;
 
   currentInvoice = inv;
@@ -566,9 +598,25 @@ async function saveDetailEdit() {
   const status    = document.getElementById("detail-status").value;
   const companyId = document.getElementById("detail-company-id").value;
 
+  const toStr = elId => document.getElementById(elId)?.value.trim() || null;
+  const toNum = elId => { const v = document.getElementById(elId)?.value; return v !== "" && v != null ? Number(v) : null; };
+
   const body = {
     status: status || null,
-    extracted_data: { ...(currentInvoice.extracted_data || {}), document_type: docType || null },
+    extracted_data: {
+      ...(currentInvoice.extracted_data || {}),
+      document_type:               docType || null,
+      invoice_date:                toStr("di-invoice-date"),
+      due_date:                    toStr("di-due-date"),
+      vendor_name:                 toStr("di-vendor-name"),
+      vendor_address:              toStr("di-vendor-address"),
+      vendor_registration_number:  toStr("di-vendor-reg-num"),
+      buyer_name:                  toStr("di-buyer-name"),
+      subtotal:                    toNum("di-subtotal"),
+      tax_amount:                  toNum("di-tax-amount"),
+      total_amount:                toNum("di-total-amount"),
+      notes:                       toStr("di-notes"),
+    },
   };
   if (companyId) body.company_id = companyId;
 

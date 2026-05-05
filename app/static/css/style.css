@@ -299,6 +299,11 @@ tbody td { padding: 11px 14px; vertical-align: middle; }
 .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; }
 .detail-item .key  { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
 .detail-item .val  { font-size: 14px; margin-top: 2px; }
+.detail-meta-row   { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; }
+.detail-meta-label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .04em; }
+.detail-meta-val   { font-size: 11px; color: var(--text-muted); word-break: break-all; }
+.detail-edit-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; margin-bottom: 12px; }
+.detail-edit-grid .form-group { margin-bottom: 0; }
 .line-items-table  { width: 100%; font-size: 13px; border-collapse: collapse; margin-top: 8px; }
 .line-items-table th { padding: 7px 10px; background: #f8fafc; font-size: 11.5px; text-align: left; border: 1px solid var(--border); }
 .line-items-table td { padding: 7px 10px; border: 1px solid var(--border); }
@@ -810,6 +815,7 @@ input[type="checkbox"] {
 
   /* Detail grid */
   .detail-grid { grid-template-columns: 1fr; }
+  .detail-edit-grid { grid-template-columns: 1fr; }
 
   /* Manual page */
   .manual-hero { padding: 24px 20px; }
