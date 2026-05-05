@@ -805,6 +805,7 @@ function formatDate(iso) {
   const d = new Date(normalized);
   if (isNaN(d)) return String(iso);
   return d.toLocaleString("ja-JP", {
+    timeZone: "Asia/Tokyo",
     year: "numeric", month: "2-digit", day: "2-digit",
     hour: "2-digit", minute: "2-digit",
   });
