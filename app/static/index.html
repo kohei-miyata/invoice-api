@@ -22,6 +22,9 @@
     <button class="nav-item" data-page="masters" onclick="showPage('masters')">
       <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg></span> 会社マスタ
     </button>
+    <button class="nav-item" data-page="manual" onclick="showPage('manual')">
+      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/></svg></span> 使い方
+    </button>
   </nav>
 
   <div class="sidebar-tenant">
@@ -188,6 +191,149 @@
     </div><!-- /page-masters -->
 
 
+
+    <!-- ══════════════════════════════════════════════════════
+         MANUAL PAGE
+    ══════════════════════════════════════════════════════ -->
+    <div id="page-manual" class="page">
+      <div class="manual-wrap">
+
+        <!-- Hero -->
+        <div class="manual-hero">
+          <div class="manual-hero-icon"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg></div>
+          <h2>Invoice Manager 使い方ガイド</h2>
+          <p>請求書・領収書をアップロードするだけで、AIが自動で内容を読み取り会社と紐付けます</p>
+        </div>
+
+        <!-- Steps -->
+        <div class="manual-section-title">はじめかた — 3ステップ</div>
+        <div class="manual-steps">
+          <div class="manual-step">
+            <div class="step-num">1</div>
+            <div class="step-body">
+              <div class="step-title">会社マスタを登録する</div>
+              <div class="step-desc">サイドバーの「会社マスタ」から取引先をあらかじめ登録しておくと、AIが自動で紐付けを行います。CSVで一括インポートも可能です。</div>
+            </div>
+          </div>
+          <div class="manual-step">
+            <div class="step-num">2</div>
+            <div class="step-body">
+              <div class="step-title">請求書をアップロードする</div>
+              <div class="step-desc">「請求書管理」のアップロードエリアにファイルをドロップ、またはボタンから選択します。フォルダごとの一括アップロードにも対応しています。</div>
+            </div>
+          </div>
+          <div class="manual-step">
+            <div class="step-num">3</div>
+            <div class="step-body">
+              <div class="step-title">解析結果を確認・修正する</div>
+              <div class="step-desc">AIが自動で金額・日付・発行者などを抽出します。紐付け会社が違う場合は「詳細」から手動で変更できます。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Feature cards -->
+        <div class="manual-section-title">各機能の説明</div>
+        <div class="manual-cards">
+
+          <div class="manual-card">
+            <div class="manual-card-icon" style="background:#ede9fe;color:var(--primary);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
+            </div>
+            <div class="manual-card-title">ファイルアップロード</div>
+            <ul class="manual-card-list">
+              <li>対応形式: PDF / JPG / PNG / GIF / WEBP</li>
+              <li>ドラッグ＆ドロップで複数ファイルを一括アップロード</li>
+              <li>「フォルダを選択」でフォルダ内のファイルをまとめてアップロード（最大50件）</li>
+              <li>同名ファイルがある場合は上書き確認を表示</li>
+              <li>アップロード中はプログレスパネルで進捗を確認できます</li>
+            </ul>
+          </div>
+
+          <div class="manual-card">
+            <div class="manual-card-icon" style="background:#dbeafe;color:#1e40af;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"/></svg>
+            </div>
+            <div class="manual-card-title">AI 自動解析</div>
+            <ul class="manual-card-list">
+              <li>アップロードすると自動で解析が始まります</li>
+              <li>請求書番号・発行日・支払期限・金額・発行者などを抽出</li>
+              <li>会社マスタと照合し、一致度が高い会社を自動で紐付け</li>
+              <li>解析結果が正しくない場合は「再解析」ボタンで再実行できます</li>
+              <li>累計トークン数と推定コストを画面上部に表示します</li>
+            </ul>
+          </div>
+
+          <div class="manual-card">
+            <div class="manual-card-icon" style="background:#dcfce7;color:#166534;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"/></svg>
+            </div>
+            <div class="manual-card-title">請求書の編集</div>
+            <ul class="manual-card-list">
+              <li>一覧の「詳細」から解析結果の確認と編集ができます</li>
+              <li>文書種別（請求書 / 領収書）を手動で変更可能</li>
+              <li>紐付け会社を変更すると、S3上のファイルも自動で移動します</li>
+              <li>ステータスを「承認済」に変更して管理できます</li>
+            </ul>
+          </div>
+
+          <div class="manual-card">
+            <div class="manual-card-icon" style="background:#fef9c3;color:#854d0e;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
+            </div>
+            <div class="manual-card-title">会社マスタ管理</div>
+            <ul class="manual-card-list">
+              <li>取引先の会社情報（名前・登録番号・住所・電話・メール）を管理</li>
+              <li>登録数が多いほどAIの紐付け精度が向上します</li>
+              <li>CSVインポートで一括登録が可能（「サンプルCSV」から書式を確認）</li>
+              <li>テキスト検索で会社名・登録番号を素早く絞り込み</li>
+            </ul>
+          </div>
+
+          <div class="manual-card">
+            <div class="manual-card-icon" style="background:#f1f5f9;color:var(--text-muted);">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
+            </div>
+            <div class="manual-card-title">検索・フィルター</div>
+            <ul class="manual-card-list">
+              <li>ファイル名・発行者名でリアルタイム検索</li>
+              <li>ステータス（解析済 / 承認済）で絞り込み</li>
+              <li>「CSV」ボタンで現在の絞り込み結果をダウンロード</li>
+              <li>1ページ20件表示、ページネーションで移動</li>
+            </ul>
+          </div>
+
+          <div class="manual-card">
+            <div class="manual-card-icon" style="background:#fee2e2;color:#991b1b;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/></svg>
+            </div>
+            <div class="manual-card-title">注意事項</div>
+            <ul class="manual-card-list">
+              <li>削除した請求書は元に戻せません</li>
+              <li>アップロードしたファイルはAI解析のため外部APIに送信されます</li>
+              <li>1回のフォルダアップロードは最大50ファイルまでです</li>
+              <li>AIの解析結果は必ず内容を確認してご利用ください</li>
+            </ul>
+          </div>
+
+        </div><!-- /manual-cards -->
+
+        <!-- Status badges reference -->
+        <div class="manual-section-title">ステータスの見かた</div>
+        <div class="card" style="padding:20px 24px;">
+          <div class="manual-status-list">
+            <div class="manual-status-item">
+              <span class="badge badge-processed">解析済</span>
+              <span>AIによる解析が完了した状態。内容を確認・編集してください。</span>
+            </div>
+            <div class="manual-status-item">
+              <span class="badge badge-approved">承認済</span>
+              <span>内容を確認し、承認済みとしてマークした状態。</span>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /manual-wrap -->
+    </div><!-- /page-manual -->
 
   </div><!-- /content -->
 </div><!-- /main -->
