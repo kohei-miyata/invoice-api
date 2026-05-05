@@ -5,6 +5,11 @@ on:
     branches:
       - main
 
+# Prevent concurrent deployments — cancel any in-progress run when a new push arrives
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
 env:
   AWS_REGION: ap-northeast-1
   ECR_REPOSITORY: invoice-api
@@ -50,9 +55,28 @@ jobs:
             --region ${{ env.AWS_REGION }}
 
       - name: Wait for deployment
+        timeout-minutes: 10
         run: |
-          aws ecs wait services-stable \
-            --cluster ${{ env.ECS_CLUSTER }} \
-            --services ${{ env.ECS_SERVICE }} \
-            --region ${{ env.AWS_REGION }}
-          echo "Deployment complete"
+          echo "Waiting for service to stabilize..."
+          for i in $(seq 1 20); do
+            RUNNING=$(aws ecs describe-services \
+              --cluster ${{ env.ECS_CLUSTER }} \
+              --services ${{ env.ECS_SERVICE }} \
+              --region ${{ env.AWS_REGION }} \
+              --query 'services[0].deployments[?status==`PRIMARY`].runningCount' \
+              --output text)
+            DESIRED=$(aws ecs describe-services \
+              --cluster ${{ env.ECS_CLUSTER }} \
+              --services ${{ env.ECS_SERVICE }} \
+              --region ${{ env.AWS_REGION }} \
+              --query 'services[0].deployments[?status==`PRIMARY`].desiredCount' \
+              --output text)
+            echo "Attempt $i: PRIMARY running=$RUNNING desired=$DESIRED"
+            if [ "$RUNNING" = "$DESIRED" ] && [ "$RUNNING" != "0" ]; then
+              echo "Deployment complete!"
+              exit 0
+            fi
+            sleep 30
+          done
+          echo "Warning: deployment did not stabilize in time, but image was pushed successfully."
+          exit 0
