@@ -37,8 +37,24 @@ function showPage(name, pushHistory = true) {
     history.pushState({ page: name }, "", `/${name}`);
   }
 
+  closeSidebar();
+
   if (name === "invoices") loadInvoices();
   if (name === "masters")  loadMasters();
+}
+
+/* ── Sidebar drawer (mobile) ────────────────────────────────── */
+
+function toggleSidebar() {
+  const sidebar = document.querySelector(".sidebar");
+  const overlay = document.getElementById("sidebar-overlay");
+  const isOpen  = sidebar.classList.toggle("open");
+  overlay.classList.toggle("open", isOpen);
+}
+
+function closeSidebar() {
+  document.querySelector(".sidebar").classList.remove("open");
+  document.getElementById("sidebar-overlay").classList.remove("open");
 }
 
 window.addEventListener("popstate", e => {
