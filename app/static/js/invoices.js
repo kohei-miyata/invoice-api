@@ -241,7 +241,7 @@ function renderInvoices() {
   if (allCheck) allCheck.checked = false;
 
   if (!filteredList.length) {
-    tbody.innerHTML = `<tr class="empty-row"><td colspan="11">請求書がありません</td></tr>`;
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="10">請求書がありません</td></tr>`;
     renderPagination();
     return;
   }
@@ -264,7 +264,6 @@ function renderInvoices() {
       <td>${statusBadge(inv.status)}</td>
       <td class="col-hide-mobile">${coCell}</td>
       <td class="col-hide-mobile">${esc(inv.extracted_data?.vendor_name || "—")}</td>
-      <td class="col-hide-mobile">${esc(inv.extracted_data?.invoice_number || "—")}</td>
       <td>${formatAmount(inv.extracted_data?.total_amount)}</td>
       <td class="col-hide-mobile">${formatDate(inv.created_at)}</td>
       <td class="col-hide-mobile"><button class="btn btn-outline btn-sm" onclick="openStorageUrl('${inv.id}')" title="ストレージで開く">${icons.link}</button></td>
@@ -328,7 +327,7 @@ function downloadCSV() {
   const ids = new Set([...checked].map(cb => cb.value));
   const rows = filteredList.filter(inv => ids.has(inv.id));
 
-  const headers = ["ファイル名","文書種別","ステータス","発行者","請求書番号","発行日","支払期限","小計","消費税","合計金額","登録日"];
+  const headers = ["ファイル名","文書種別","ステータス","発行者","発行日","支払期限","小計","消費税","合計金額","登録日"];
   const csv = [
     headers.join(","),
     ...rows.map(inv => {
@@ -338,7 +337,6 @@ function downloadCSV() {
         d.document_type || "",
         inv.status,
         d.vendor_name || "",
-        d.invoice_number || "",
         d.invoice_date || "",
         d.due_date || "",
         d.subtotal ?? "",
@@ -500,7 +498,6 @@ function renderInvoiceDetail(inv) {
     <div class="detail-grid">
       <div class="detail-item"><div class="key">文書種別</div><div class="val">${esc(d.document_type || "—")}</div></div>
       <div class="detail-item"><div class="key">ステータス</div><div class="val">${statusBadge(inv.status)}</div></div>
-      <div class="detail-item"><div class="key">請求書番号</div><div class="val">${esc(d.invoice_number || "—")}</div></div>
       <div class="detail-item"><div class="key">発行日</div><div class="val">${esc(d.invoice_date || "—")}</div></div>
       <div class="detail-item"><div class="key">支払期限</div><div class="val">${esc(d.due_date || "—")}</div></div>
       <div class="detail-item"><div class="key">発行者</div><div class="val">${esc(d.vendor_name || "—")}</div></div>
