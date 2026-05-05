@@ -496,6 +496,7 @@ function renderInvoiceDetail(inv) {
   const d = inv.extracted_data || {};
   document.getElementById("detail-body").innerHTML = `
     <div class="detail-grid">
+      <div class="detail-item"><div class="key">UUID</div><div class="val" style="font-size:11px;word-break:break-all;color:var(--text-muted);">${esc(inv.id)}</div></div>
       <div class="detail-item"><div class="key">文書種別</div><div class="val">${esc(d.document_type || "—")}</div></div>
       <div class="detail-item"><div class="key">ステータス</div><div class="val">${statusBadge(inv.status)}</div></div>
       <div class="detail-item"><div class="key">発行日</div><div class="val">${esc(d.invoice_date || "—")}</div></div>
