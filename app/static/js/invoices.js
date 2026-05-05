@@ -443,26 +443,15 @@ async function processNextSingleFile() {
   if (prefetch && prefetch.file === file) {
     const p = prefetch.promise;
     prefetch = null;
-    // Show next modal immediately with loading state while waiting for result
-    document.getElementById("detail-title").textContent = file.name;
-    document.getElementById("detail-body").innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:center;padding:48px;gap:10px;color:var(--text-muted);">
-        <span class="spinner"></span><span>解析中...</span>
-      </div>`;
-    document.getElementById("detail-doc-type").value = "";
-    document.getElementById("detail-status").value   = "processed";
-    document.getElementById("detail-company-search").value = "";
-    document.getElementById("detail-company-id").value = "";
-    document.getElementById("process-btn").style.display = "none";
-    openModal("invoice-detail-modal");
+    // Await silently — no blocking loading modal; open result modal when ready
     const data = await p;
-    if (data.error) {
+    const errMsg = data?.error || (!data?.result ? "アップロードに失敗しました" : null);
+    if (errMsg) {
       batchFailed++;
-      addProgressLog(file.name, "error", data.error);
+      addProgressLog(file.name, "error", errMsg);
       updateProgressBar();
       if (!singleQueue.length) finalizeProgressPanel(true);
-      toast(`アップロード失敗: ${data.error}`, "error");
-      closeModal("invoice-detail-modal");
+      toast(`アップロード失敗: ${errMsg}`, "error");
       processNextSingleFile();
       return;
     }
@@ -477,6 +466,7 @@ async function processNextSingleFile() {
     loadUsageStats();
     renderInvoiceDetail(result);
     currentInvoiceId = result.id;
+    openModal("invoice-detail-modal");
     startPrefetch();
     return;
   }
@@ -547,24 +537,24 @@ function renderInvoiceDetail(inv) {
         <input type="number" id="di-total-amount" value="${d.total_amount ?? ''}">
       </div>
     </div>
-    ${(d.line_items || []).length ? `
-      <div style="margin-bottom:12px;">
-        <div class="detail-meta-label" style="display:block;margin-bottom:6px;">明細</div>
-        <table class="line-items-table">
-          <thead><tr><th>品目</th><th>数量</th><th>単価</th><th>金額</th></tr></thead>
-          <tbody>
-            ${d.line_items.map(li => `
-              <tr>
-                <td>${esc(li.description || "")}</td>
-                <td class="text-right">${li.quantity ?? ""}</td>
-                <td class="text-right">${formatAmount(li.unit_price)}</td>
-                <td class="text-right">${formatAmount(li.amount)}</td>
-              </tr>
-            `).join("")}
-          </tbody>
-        </table>
-      </div>
-    ` : ""}
+    <div style="margin-bottom:12px;">
+      <div class="detail-meta-label" style="display:block;margin-bottom:6px;">明細</div>
+      <table class="line-items-table" id="di-line-items-table">
+        <thead><tr><th>品目</th><th style="width:60px">数量</th><th style="width:90px">単価</th><th style="width:90px">金額</th><th style="width:28px"></th></tr></thead>
+        <tbody>
+          ${(d.line_items || []).map(li => `
+            <tr>
+              <td><input type="text" class="li-desc" value="${esc(li.description || '')}"></td>
+              <td><input type="number" class="li-qty" value="${li.quantity ?? ''}"></td>
+              <td><input type="number" class="li-unit-price" value="${li.unit_price ?? ''}"></td>
+              <td><input type="number" class="li-amount" value="${li.amount ?? ''}"></td>
+              <td><button type="button" class="li-del-btn" onclick="removeLineItem(this)" title="削除">×</button></td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+      <button type="button" class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="addLineItem()">＋ 行を追加</button>
+    </div>
     <div class="form-group" style="margin-bottom:0;">
       <label>備考</label>
       <textarea id="di-notes" style="min-height:56px;">${esc(d.notes || '')}</textarea>
@@ -609,6 +599,14 @@ async function saveDetailEdit() {
 
   const toStr = elId => document.getElementById(elId)?.value.trim() || null;
   const toNum = elId => { const v = document.getElementById(elId)?.value; return v !== "" && v != null ? Number(v) : null; };
+  const toN   = v => v !== "" && v != null ? Number(v) : null;
+
+  const line_items = [...document.querySelectorAll("#di-line-items-table tbody tr")].map(tr => ({
+    description: tr.querySelector(".li-desc")?.value.trim() || null,
+    quantity:    toN(tr.querySelector(".li-qty")?.value),
+    unit_price:  toN(tr.querySelector(".li-unit-price")?.value),
+    amount:      toN(tr.querySelector(".li-amount")?.value),
+  })).filter(li => li.description || li.amount != null);
 
   const body = {
     status: status || null,
@@ -625,6 +623,7 @@ async function saveDetailEdit() {
       tax_amount:                  toNum("di-tax-amount"),
       total_amount:                toNum("di-total-amount"),
       notes:                       toStr("di-notes"),
+      line_items,
     },
   };
   if (companyId) body.company_id = companyId;
@@ -641,6 +640,25 @@ async function saveDetailEdit() {
   } finally {
     btn.disabled = false;
   }
+}
+
+function addLineItem() {
+  const tbody = document.querySelector("#di-line-items-table tbody");
+  if (!tbody) return;
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td><input type="text" class="li-desc" value=""></td>
+    <td><input type="number" class="li-qty" value=""></td>
+    <td><input type="number" class="li-unit-price" value=""></td>
+    <td><input type="number" class="li-amount" value=""></td>
+    <td><button type="button" class="li-del-btn" onclick="removeLineItem(this)" title="削除">×</button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector(".li-desc").focus();
+}
+
+function removeLineItem(btn) {
+  btn.closest("tr").remove();
 }
 
 /* ── Edit modal ──────────────────────────────────────────────── */
