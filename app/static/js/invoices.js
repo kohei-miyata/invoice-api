@@ -14,11 +14,9 @@ const BATCH_MAX  = 50;
 
 /* ── Batch upload queue ──────────────────────────────────────── */
 
-let batchQueue   = [];
 let batchTotal   = 0;
 let batchDone    = 0;
 let batchFailed  = 0;
-let batchRunning = false;
 
 /* single-file sequential review queue (used when multiple files are dropped/selected at once) */
 let singleQueue = [];
@@ -82,43 +80,6 @@ function finalizeProgressPanel(hadErrors) {
     : "var(--success)";
 }
 
-async function processBatchQueue() {
-  if (batchRunning) return;
-  batchRunning = true;
-  batchDone = 0; batchFailed = 0;
-  showProgressPanel();
-  updateProgressBar();
-
-  while (batchQueue.length > 0) {
-    const file = batchQueue.shift();
-    setProgressCurrent(file.name);
-
-    const isDuplicate = invoiceList.some(inv => inv.original_filename === file.name);
-    if (isDuplicate) {
-      batchFailed++;
-      addProgressLog(file.name, "skip", "重複スキップ");
-      updateProgressBar();
-      continue;
-    }
-
-    try {
-      const fd = new FormData();
-      fd.append("file", file);
-      await api.uploadInvoice(fd);
-      batchDone++;
-      addProgressLog(file.name, "success");
-    } catch (e) {
-      batchFailed++;
-      addProgressLog(file.name, "error", e.message);
-    }
-    updateProgressBar();
-  }
-
-  batchRunning = false;
-  finalizeProgressPanel(batchFailed > 0);
-  loadInvoices();
-  loadUsageStats();
-}
 
 function handleFolderInput(files) {
   const allowed = new Set(["pdf","jpg","jpeg","png","gif","webp"]);
@@ -131,13 +92,7 @@ function handleFolderInput(files) {
     toast(`${valid.length}件中 ${BATCH_MAX}件のみ処理します`, "info");
   }
 
-  if (!batchRunning) { batchQueue = []; batchTotal = 0; }
-  batchQueue.push(...limited);
-  batchTotal += limited.length;
-  document.getElementById("progress-title").textContent = "アップロード中...";
-  processBatchQueue();
-
-  // delay reset so browser finishes reading the FileList before clearing
+  handleFiles(limited);
   setTimeout(() => { document.getElementById("folder-input").value = ""; }, 200);
 }
 
@@ -381,13 +336,11 @@ async function handleFiles(files) {
   if (!fileArr.length) return;
   singleQueue = fileArr.slice(1);
 
-  if (!batchRunning) {
-    batchTotal = fileArr.length;
-    batchDone  = 0;
-    batchFailed = 0;
-    showProgressPanel();
-    updateProgressBar();
-  }
+  batchTotal  = fileArr.length;
+  batchDone   = 0;
+  batchFailed = 0;
+  showProgressPanel();
+  updateProgressBar();
 
   await uploadInvoice(fileArr[0]);
 }
@@ -430,7 +383,7 @@ function cancelOverwrite() {
   closeModal("overwrite-confirm-modal");
   pendingUploadFile  = null;
   pendingOverwriteId = null;
-  if (file && !batchRunning) {
+  if (file) {
     batchFailed++;
     addProgressLog(file.name, "skip", "上書きキャンセル");
     updateProgressBar();
@@ -446,12 +399,10 @@ async function doUpload(file) {
   try {
     const [result, companies] = await Promise.all([api.uploadInvoice(fd), api.listCompanies()]);
     companiesList = companies;
-    if (!batchRunning) {
-      batchDone++;
-      addProgressLog(file.name, "success");
-      updateProgressBar();
-      if (!singleQueue.length) finalizeProgressPanel(batchFailed > 0);
-    }
+    batchDone++;
+    addProgressLog(file.name, "success");
+    updateProgressBar();
+    if (!singleQueue.length) finalizeProgressPanel(batchFailed > 0);
     toast(`「${file.name}」の解析が完了しました`, "success");
     loadInvoices();
     loadUsageStats();
@@ -459,12 +410,10 @@ async function doUpload(file) {
     currentInvoiceId = result.id;
     openModal("invoice-detail-modal");
   } catch (e) {
-    if (!batchRunning) {
-      batchFailed++;
-      addProgressLog(file.name, "error", e.message);
-      updateProgressBar();
-      if (!singleQueue.length) finalizeProgressPanel(true);
-    }
+    batchFailed++;
+    addProgressLog(file.name, "error", e.message);
+    updateProgressBar();
+    if (!singleQueue.length) finalizeProgressPanel(true);
     toast(`アップロード失敗: ${e.message}`, "error");
     processNextSingleFile();
   }
