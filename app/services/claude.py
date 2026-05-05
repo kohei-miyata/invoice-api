@@ -65,7 +65,13 @@ def _parse_json_response(text: str) -> Any:
     if text.startswith("```"):
         lines = text.split("\n")
         text = "\n".join(lines[1:-1]).strip()
-    return json.loads(text)
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        # Claude occasionally appends extra text after the JSON object.
+        # raw_decode reads the first valid JSON value and ignores trailing content.
+        obj, _ = json.JSONDecoder().raw_decode(text)
+        return obj
 
 
 def _usage(response) -> dict:
