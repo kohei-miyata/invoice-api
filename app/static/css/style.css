@@ -674,10 +674,12 @@ input[type="checkbox"] {
   .search-box input { width: 100%; min-width: 0; }
   .filter-select { flex: 1; }
 
-  /* Table font */
-  table { font-size: 12.5px; }
+  /* Table: hide non-essential columns, no horizontal scroll */
+  .col-hide-mobile { display: none; }
+  .table-wrap { overflow-x: visible; }
+  table { font-size: 13px; }
   thead th { padding: 9px 10px; }
-  tbody td { padding: 9px 10px; }
+  tbody td { padding: 10px 10px; }
 
   /* Modals: bottom sheet */
   .modal-overlay {

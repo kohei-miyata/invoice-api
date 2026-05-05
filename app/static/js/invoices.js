@@ -256,18 +256,18 @@ function renderInvoices() {
       : `<span class="company-tag company-tag-none">未紐付け</span>`;
     return `
     <tr>
-      <td><input type="checkbox" class="row-check" value="${inv.id}"></td>
+      <td class="col-hide-mobile"><input type="checkbox" class="row-check" value="${inv.id}"></td>
       <td class="truncate" title="${esc(inv.original_filename || "")}">
         ${esc(inv.original_filename || inv.id.slice(0,8) + "...")}
       </td>
-      <td>${esc(inv.extracted_data?.document_type || "—")}</td>
+      <td class="col-hide-mobile">${esc(inv.extracted_data?.document_type || "—")}</td>
       <td>${statusBadge(inv.status)}</td>
-      <td>${coCell}</td>
-      <td>${esc(inv.extracted_data?.vendor_name || "—")}</td>
-      <td>${esc(inv.extracted_data?.invoice_number || "—")}</td>
+      <td class="col-hide-mobile">${coCell}</td>
+      <td class="col-hide-mobile">${esc(inv.extracted_data?.vendor_name || "—")}</td>
+      <td class="col-hide-mobile">${esc(inv.extracted_data?.invoice_number || "—")}</td>
       <td>${formatAmount(inv.extracted_data?.total_amount)}</td>
-      <td>${formatDate(inv.created_at)}</td>
-      <td><button class="btn btn-outline btn-sm" onclick="openStorageUrl('${inv.id}')" title="ストレージで開く">${icons.link}</button></td>
+      <td class="col-hide-mobile">${formatDate(inv.created_at)}</td>
+      <td class="col-hide-mobile"><button class="btn btn-outline btn-sm" onclick="openStorageUrl('${inv.id}')" title="ストレージで開く">${icons.link}</button></td>
       <td>
         <div class="flex gap-2">
           <button class="btn btn-outline btn-sm" onclick="openInvoiceDetail('${inv.id}')">詳細</button>
