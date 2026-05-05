@@ -303,7 +303,7 @@ function downloadCSV() {
         d.subtotal ?? "",
         d.tax_amount ?? "",
         d.total_amount ?? "",
-        inv.created_at,
+        formatDate(inv.created_at),
       ].map(v => `"${String(v).replace(/"/g, '""')}"`).join(",");
     }),
   ].join("\n");
