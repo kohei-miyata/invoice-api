@@ -587,7 +587,18 @@ function renderInvoiceDetail(inv) {
       const n = Number(el.value);
       if (el.value !== "" && !isNaN(n)) el.value = n.toLocaleString("ja-JP");
     });
-    el.addEventListener("input", () => { el.value = el.value.replace(/[^\d]/g, ""); });
+    el.addEventListener("input", () => {
+      el.value = el.value.replace(/[^\d]/g, "");
+      if (id === "di-subtotal" || id === "di-tax-amount") {
+        const sub = Number(document.getElementById("di-subtotal")?.value || 0);
+        const tax = Number(document.getElementById("di-tax-amount")?.value || 0);
+        const totalEl = document.getElementById("di-total-amount");
+        if (totalEl) {
+          const sum = sub + tax;
+          totalEl.value = sum > 0 ? sum.toLocaleString("ja-JP") : "";
+        }
+      }
+    });
   });
 }
 
