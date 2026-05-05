@@ -800,7 +800,14 @@ function formatAmount(val) {
 
 function formatDate(iso) {
   if (!iso) return "—";
-  return new Date(iso).toLocaleDateString("ja-JP");
+  // PostgreSQL returns microseconds (6 digits); JS Date only handles milliseconds (3 digits)
+  const normalized = String(iso).replace(/(\.\d{3})\d+/, "$1");
+  const d = new Date(normalized);
+  if (isNaN(d)) return String(iso);
+  return d.toLocaleString("ja-JP", {
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit",
+  });
 }
 
 /* ── Init ────────────────────────────────────────────────────── */
