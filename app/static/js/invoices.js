@@ -522,28 +522,20 @@ function renderInvoiceDetail(inv) {
         <input type="text" id="di-vendor-name" value="${esc(d.vendor_name || '')}">
       </div>
       <div class="form-group">
-        <label>宛先</label>
-        <input type="text" id="di-buyer-name" value="${esc(d.buyer_name || '')}">
-      </div>
-      <div class="form-group">
-        <label>発行者住所</label>
-        <input type="text" id="di-vendor-address" value="${esc(d.vendor_address || '')}">
-      </div>
-      <div class="form-group">
         <label>登録番号</label>
         <input type="text" id="di-vendor-reg-num" value="${esc(d.vendor_registration_number || '')}">
       </div>
       <div class="form-group">
         <label>小計</label>
-        <input type="number" id="di-subtotal" value="${d.subtotal ?? ''}">
+        <input type="text" inputmode="numeric" id="di-subtotal" value="${d.subtotal != null ? Number(d.subtotal).toLocaleString('ja-JP') : ''}">
       </div>
       <div class="form-group">
         <label>消費税</label>
-        <input type="number" id="di-tax-amount" value="${d.tax_amount ?? ''}">
+        <input type="text" inputmode="numeric" id="di-tax-amount" value="${d.tax_amount != null ? Number(d.tax_amount).toLocaleString('ja-JP') : ''}">
       </div>
       <div class="form-group" style="grid-column:1/-1;">
         <label>合計金額</label>
-        <input type="number" id="di-total-amount" value="${d.total_amount ?? ''}">
+        <input type="text" inputmode="numeric" id="di-total-amount" value="${d.total_amount != null ? Number(d.total_amount).toLocaleString('ja-JP') : ''}">
       </div>
     </div>
     <div style="margin-bottom:12px;">
@@ -607,8 +599,8 @@ async function saveDetailEdit() {
   const companyId = document.getElementById("detail-company-id").value;
 
   const toStr = elId => document.getElementById(elId)?.value.trim() || null;
-  const toNum = elId => { const v = document.getElementById(elId)?.value; return v !== "" && v != null ? Number(v) : null; };
-  const toN   = v => v !== "" && v != null ? Number(v) : null;
+  const toNum = elId => { const v = (document.getElementById(elId)?.value || "").replace(/,/g, ""); return v !== "" ? Number(v) : null; };
+  const toN   = v => v !== "" && v != null ? Number(String(v).replace(/,/g, "")) : null;
 
   const line_items = [...document.querySelectorAll("#di-line-items-table tbody tr")].map(tr => ({
     description: tr.querySelector(".li-desc")?.value.trim() || null,
@@ -625,9 +617,7 @@ async function saveDetailEdit() {
       invoice_date:                toStr("di-invoice-date"),
       due_date:                    toStr("di-due-date"),
       vendor_name:                 toStr("di-vendor-name"),
-      vendor_address:              toStr("di-vendor-address"),
       vendor_registration_number:  toStr("di-vendor-reg-num"),
-      buyer_name:                  toStr("di-buyer-name"),
       subtotal:                    toNum("di-subtotal"),
       tax_amount:                  toNum("di-tax-amount"),
       total_amount:                toNum("di-total-amount"),
