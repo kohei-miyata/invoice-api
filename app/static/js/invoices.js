@@ -9,6 +9,7 @@ let currentInvoice   = null;
 let companiesList    = [];
 let pendingUploadFile    = null;
 let pendingOverwriteId   = null;
+let detailSaved          = false;
 const PAGE_SIZE = 20;
 const BATCH_MAX  = 50;
 
@@ -563,6 +564,7 @@ function renderInvoiceDetail(inv) {
   `;
 
   currentInvoice = inv;
+  detailSaved    = false;
   document.getElementById("detail-doc-type").value = inv.extracted_data?.document_type || "";
   document.getElementById("detail-status").value   = inv.status || "processed";
   setCompanySearch("detail-company-search", "detail-company-id", inv.company_id || "");
@@ -628,7 +630,6 @@ async function saveDetailEdit() {
   if (!id || !currentInvoice) return;
 
   const docType   = document.getElementById("detail-doc-type").value;
-  const status    = document.getElementById("detail-status").value;
   const companyId = document.getElementById("detail-company-id").value;
 
   const toStr = elId => document.getElementById(elId)?.value.trim() || null;
@@ -643,7 +644,7 @@ async function saveDetailEdit() {
   })).filter(li => li.description || li.amount != null);
 
   const body = {
-    status: status || null,
+    status: "approved",
     extracted_data: {
       ...(currentInvoice.extracted_data || {}),
       document_type:               docType || null,
@@ -664,7 +665,8 @@ async function saveDetailEdit() {
   btn.disabled = true;
   try {
     await api.updateInvoice(id, body);
-    toast("更新しました", "success");
+    detailSaved = true;
+    toast("承認済みとして保存しました", "success");
     loadInvoices();
     closeModal("invoice-detail-modal");
   } catch (e) {
@@ -806,5 +808,10 @@ initCompanySearch("detail-company-search", "detail-company-id", "detail-company-
 initCompanySearch("ei-company-search",     "ei-company-id",     "ei-company-dropdown");
 
 document.getElementById("invoice-detail-modal")?.addEventListener("modal:closed", () => {
+  const id          = currentInvoiceId;
+  const wasNew      = !detailSaved && currentInvoice?.status === "processed";
   processNextSingleFile();
+  if (wasNew && id) {
+    api.updateInvoice(id, { status: "processed" }).catch(() => {});
+  }
 });

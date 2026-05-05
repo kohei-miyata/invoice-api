@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,555 +8,692 @@
   <link rel="stylesheet" href="/static/css/style.css" />
   <link rel="stylesheet" href="/static/vendor/flatpickr.min.css" />
 </head>
+
 <body>
 
-<!-- ── Sidebar ───────────────────────────────────────────── -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <h1>Invoice Manager</h1>
-    <p>請求書・領収書管理</p>
-  </div>
+  <!-- ── Sidebar ───────────────────────────────────────────── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <h1>Invoice Manager</h1>
+      <p>請求書・領収書管理</p>
+    </div>
 
-  <nav class="sidebar-nav">
-    <button class="nav-item" data-page="invoices" onclick="showPage('invoices')">
-      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg></span> 請求書管理
-    </button>
-    <button class="nav-item" data-page="masters" onclick="showPage('masters')">
-      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg></span> 会社マスタ
-    </button>
-    <button class="nav-item" data-page="manual" onclick="showPage('manual')">
-      <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z"/></svg></span> 使い方
-    </button>
-  </nav>
+    <nav class="sidebar-nav">
+      <button class="nav-item" data-page="invoices" onclick="showPage('invoices')">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+          </svg></span> 請求書管理
+      </button>
+      <button class="nav-item" data-page="masters" onclick="showPage('masters')">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+          </svg></span> 会社マスタ
+      </button>
+      <button class="nav-item" data-page="manual" onclick="showPage('manual')">
+        <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none"
+            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
+          </svg></span> 使い方
+      </button>
+    </nav>
 
-  <div class="sidebar-tenant">
-    <div>テナント</div>
-    <select id="tenant-select">
-      <option value="demo">demo</option>
-      <option value="default">default</option>
-    </select>
-  </div>
-</aside>
+    <div class="sidebar-tenant">
+      <div>テナント</div>
+      <select id="tenant-select">
+        <option value="demo">demo</option>
+        <option value="default">default</option>
+      </select>
+    </div>
+  </aside>
 
-<!-- ── Sidebar overlay (mobile) ──────────────────────────── -->
-<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+  <!-- ── Sidebar overlay (mobile) ──────────────────────────── -->
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-<!-- ── Main ──────────────────────────────────────────────── -->
-<div class="main">
+  <!-- ── Main ──────────────────────────────────────────────── -->
+  <div class="main">
 
-  <!-- Topbar -->
-  <header class="topbar">
-    <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="メニュー">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/></svg>
-    </button>
-    <h2 id="page-title" style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg> 請求書管理</h2>
-    <div class="actions" id="topbar-actions"></div>
-  </header>
+    <!-- Topbar -->
+    <header class="topbar">
+      <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-label="メニュー">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+        </svg>
+      </button>
+      <h2 id="page-title" style="display:flex;align-items:center;gap:8px;"><svg xmlns="http://www.w3.org/2000/svg"
+          width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+        </svg> 請求書管理</h2>
+      <div class="actions" id="topbar-actions"></div>
+    </header>
 
-  <div class="content">
+    <div class="content">
 
-    <!-- ══════════════════════════════════════════════════════
+      <!-- ══════════════════════════════════════════════════════
          INVOICES PAGE
     ══════════════════════════════════════════════════════ -->
-    <div id="page-invoices" class="page">
+      <div id="page-invoices" class="page">
 
-      <!-- Upload zone -->
-      <div class="card" style="margin-bottom:20px;">
-        <div id="upload-zone" class="upload-zone" style="margin:16px;">
-          <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z"/></svg></div>
-          <p style="margin-bottom:14px;">ここにファイルをドロップ、または選択</p>
-          <div class="upload-zone-actions">
-            <button class="upload-btn-choice" onclick="event.stopPropagation();document.getElementById('file-input').click()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"/></svg>
-              ファイルを選択
-            </button>
-            <button class="upload-btn-choice" onclick="event.stopPropagation();document.getElementById('folder-input').click()">
-              <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v8.25"/></svg>
-              フォルダを選択
-            </button>
+        <!-- Upload zone -->
+        <div class="card" style="margin-bottom:20px;">
+          <div id="upload-zone" class="upload-zone" style="margin:16px;">
+            <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 16.5V9.75m0 0 3 3m-3-3-3 3M6.75 19.5a4.5 4.5 0 0 1-1.41-8.775 5.25 5.25 0 0 1 10.233-2.33 3 3 0 0 1 3.758 3.848A3.752 3.752 0 0 1 18 19.5H6.75Z" />
+              </svg></div>
+            <p style="margin-bottom:14px;">ここにファイルをドロップ、または選択</p>
+            <div class="upload-zone-actions">
+              <button class="upload-btn-choice"
+                onclick="event.stopPropagation();document.getElementById('file-input').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                </svg>
+                ファイルを選択
+              </button>
+              <button class="upload-btn-choice"
+                onclick="event.stopPropagation();document.getElementById('folder-input').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v8.25" />
+                </svg>
+                フォルダを選択
+              </button>
+            </div>
+            <p style="margin-top:10px;font-size:11px;color:var(--text-muted);">PDF / JPG / PNG 対応 · フォルダは最大50ファイル</p>
+            <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" multiple style="display:none" />
+            <input type="file" id="folder-input" webkitdirectory multiple style="display:none"
+              onchange="handleFolderInput(this.files)" />
           </div>
-          <p style="margin-top:10px;font-size:11px;color:var(--text-muted);">PDF / JPG / PNG 対応 · フォルダは最大50ファイル</p>
-          <input type="file" id="file-input"   accept=".pdf,.jpg,.jpeg,.png,.gif,.webp" multiple style="display:none" />
-          <input type="file" id="folder-input" webkitdirectory multiple style="display:none" onchange="handleFolderInput(this.files)" />
         </div>
-      </div>
 
-      <!-- Stats -->
-      <div class="stats">
-        <div class="stat-card">
-          <div class="label">総件数</div>
-          <div class="value" id="invoices-count">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">AI処理済</div>
-          <div class="value" id="usage-ai-count">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">累計トークン</div>
-          <div class="value" style="font-size:20px;" id="usage-tokens">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="label">推定コスト</div>
-          <div class="value" style="font-size:20px;" id="usage-cost">—</div>
-        </div>
-      </div>
-
-      <!-- Table card -->
-      <div class="card">
-        <div class="toolbar">
-          <div class="search-box">
-            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
-            <input type="text" placeholder="ファイル名・発行者で検索..." id="invoice-search"
-              oninput="filterInvoices()" />
+        <!-- Stats -->
+        <div class="stats">
+          <div class="stat-card">
+            <div class="label">総件数</div>
+            <div class="value" id="invoices-count">—</div>
           </div>
-          <select class="filter-select" id="invoice-status-filter" onchange="loadInvoices(this.value)">
-            <option value="">すべてのステータス</option>
-            <option value="processed">解析済</option>
-          </select>
-          <div class="spacer"></div>
-          <button class="btn btn-outline" onclick="downloadCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> CSV</button>
+          <div class="stat-card">
+            <div class="label">AI処理済</div>
+            <div class="value" id="usage-ai-count">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">累計トークン</div>
+            <div class="value" style="font-size:20px;" id="usage-tokens">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">推定コスト</div>
+            <div class="value" style="font-size:20px;" id="usage-cost">—</div>
+          </div>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th style="width:36px;" class="col-hide-mobile"><input type="checkbox" id="select-all-check" onchange="toggleSelectAll(this)"></th>
-                <th>ファイル名</th>
-                <th style="min-width:90px;" class="col-hide-mobile">文書種別</th>
-                <th style="min-width:90px;">ステータス</th>
-                <th style="min-width:120px;" class="col-hide-mobile">紐付け会社</th>
-                <th style="min-width:120px;" class="col-hide-mobile">発行者</th>
-                <th style="min-width:100px;">合計金額</th>
-                <th style="min-width:90px;" class="col-hide-mobile">登録日</th>
-                <th style="min-width:70px;" class="col-hide-mobile">ストレージ</th>
-                <th style="min-width:160px;">操作</th>
-              </tr>
-            </thead>
-            <tbody id="invoices-tbody">
-              <tr class="empty-row"><td colspan="10">読み込み中...</td></tr>
-            </tbody>
-          </table>
-          <div id="invoice-pagination" class="pagination"></div>
+        <!-- Table card -->
+        <div class="card">
+          <div class="toolbar">
+            <div class="search-box">
+              <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg></span>
+              <input type="text" placeholder="ファイル名・発行者で検索..." id="invoice-search" oninput="filterInvoices()" />
+            </div>
+            <select class="filter-select" id="invoice-status-filter" onchange="loadInvoices(this.value)">
+              <option value="">すべてのステータス</option>
+              <option value="processed">解析済</option>
+            </select>
+            <div class="spacer"></div>
+            <button class="btn btn-outline" onclick="downloadCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg> CSV</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:36px;" class="col-hide-mobile"><input type="checkbox" id="select-all-check"
+                      onchange="toggleSelectAll(this)"></th>
+                  <th>ファイル名</th>
+                  <th style="min-width:90px;" class="col-hide-mobile">文書種別</th>
+                  <th style="min-width:90px;">ステータス</th>
+                  <th style="min-width:120px;" class="col-hide-mobile">紐付け会社</th>
+                  <th style="min-width:120px;" class="col-hide-mobile">発行者</th>
+                  <th style="min-width:100px;">合計金額</th>
+                  <th style="min-width:90px;" class="col-hide-mobile">登録日</th>
+                  <th style="min-width:70px;" class="col-hide-mobile">ストレージ</th>
+                  <th style="min-width:160px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="invoices-tbody">
+                <tr class="empty-row">
+                  <td colspan="10">読み込み中...</td>
+                </tr>
+              </tbody>
+            </table>
+            <div id="invoice-pagination" class="pagination"></div>
+          </div>
         </div>
-      </div>
-    </div><!-- /page-invoices -->
+      </div><!-- /page-invoices -->
 
 
-    <!-- ══════════════════════════════════════════════════════
+      <!-- ══════════════════════════════════════════════════════
          MASTERS PAGE
     ══════════════════════════════════════════════════════ -->
-    <div id="page-masters" class="page">
-      <div class="stats">
-        <div class="stat-card">
-          <div class="label">登録会社数</div>
-          <div class="value" id="masters-count">—</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="toolbar">
-          <div class="search-box">
-            <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg></span>
-            <input type="text" placeholder="会社名・登録番号で検索..." id="master-search"
-              oninput="filterMasters()" />
+      <div id="page-masters" class="page">
+        <div class="stats">
+          <div class="stat-card">
+            <div class="label">登録会社数</div>
+            <div class="value" id="masters-count">—</div>
           </div>
-          <div class="spacer"></div>
-          <button class="btn btn-outline" onclick="downloadSampleCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg> サンプルCSV</button>
-          <label class="btn btn-outline" style="cursor:pointer;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg> CSVインポート
-            <input type="file" id="master-csv-input" accept=".csv" style="display:none" onchange="handleMasterCSVInput(this)">
-          </label>
-          <button class="btn btn-primary" onclick="openCreateMaster()">＋ 新規登録</button>
         </div>
 
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>会社名</th>
-                <th>登録番号</th>
-                <th>住所</th>
-                <th>電話番号</th>
-                <th>メール</th>
-                <th>操作</th>
-              </tr>
-            </thead>
-            <tbody id="masters-tbody">
-              <tr class="empty-row"><td colspan="6">読み込み中...</td></tr>
-            </tbody>
-          </table>
+        <div class="card">
+          <div class="toolbar">
+            <div class="search-box">
+              <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg></span>
+              <input type="text" placeholder="会社名・登録番号で検索..." id="master-search" oninput="filterMasters()" />
+            </div>
+            <div class="spacer"></div>
+            <button class="btn btn-outline" onclick="downloadSampleCSV()"><svg xmlns="http://www.w3.org/2000/svg"
+                width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+              </svg> サンプルCSV</button>
+            <label class="btn btn-outline" style="cursor:pointer;">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+              </svg> CSVインポート
+              <input type="file" id="master-csv-input" accept=".csv" style="display:none"
+                onchange="handleMasterCSVInput(this)">
+            </label>
+            <button class="btn btn-primary" onclick="openCreateMaster()">＋ 新規登録</button>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>会社名</th>
+                  <th>登録番号</th>
+                  <th>住所</th>
+                  <th>電話番号</th>
+                  <th>メール</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="masters-tbody">
+                <tr class="empty-row">
+                  <td colspan="6">読み込み中...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
-    </div><!-- /page-masters -->
+      </div><!-- /page-masters -->
 
 
 
-    <!-- ══════════════════════════════════════════════════════
+      <!-- ══════════════════════════════════════════════════════
          MANUAL PAGE
     ══════════════════════════════════════════════════════ -->
-    <div id="page-manual" class="page">
-      <div class="manual-wrap">
+      <div id="page-manual" class="page">
+        <div class="manual-wrap">
 
-        <!-- Hero -->
-        <div class="manual-hero">
-          <div class="manual-hero-icon"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/></svg></div>
-          <h2>Invoice Manager 使い方ガイド</h2>
-          <p>請求書・領収書をアップロードするだけで、AIが自動で内容を読み取り会社と紐付けます</p>
-        </div>
-
-        <!-- Steps -->
-        <div class="manual-section-title">はじめかた — 3ステップ</div>
-        <div class="manual-steps">
-          <div class="manual-step">
-            <div class="step-num">1</div>
-            <div class="step-body">
-              <div class="step-title">会社マスタを登録する</div>
-              <div class="step-desc">サイドバーの「会社マスタ」から取引先をあらかじめ登録しておくと、AIが自動で紐付けを行います。CSVで一括インポートも可能です。</div>
-            </div>
-          </div>
-          <div class="manual-step">
-            <div class="step-num">2</div>
-            <div class="step-body">
-              <div class="step-title">請求書をアップロードする</div>
-              <div class="step-desc">「請求書管理」のアップロードエリアにファイルをドロップ、またはボタンから選択します。フォルダごとの一括アップロードにも対応しています。</div>
-            </div>
-          </div>
-          <div class="manual-step">
-            <div class="step-num">3</div>
-            <div class="step-body">
-              <div class="step-title">解析結果を確認・修正する</div>
-              <div class="step-desc">AIが自動で金額・日付・発行者などを抽出します。紐付け会社が違う場合は「詳細」から手動で変更できます。</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Feature cards -->
-        <div class="manual-section-title">各機能の説明</div>
-        <div class="manual-cards">
-
-          <div class="manual-card">
-            <div class="manual-card-icon" style="background:#ede9fe;color:var(--primary);">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5"/></svg>
-            </div>
-            <div class="manual-card-title">ファイルアップロード</div>
-            <ul class="manual-card-list">
-              <li>対応形式: PDF / JPG / PNG / GIF / WEBP</li>
-              <li>ドラッグ＆ドロップで複数ファイルを一括アップロード</li>
-              <li>「フォルダを選択」でフォルダ内のファイルをまとめてアップロード（最大50件）</li>
-              <li>同名ファイルがある場合は上書き確認を表示</li>
-              <li>アップロード中はプログレスパネルで進捗を確認できます</li>
-            </ul>
+          <!-- Hero -->
+          <div class="manual-hero">
+            <div class="manual-hero-icon"><svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="none"
+                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+              </svg></div>
+            <h2>Invoice Manager 使い方ガイド</h2>
+            <p>請求書・領収書をアップロードするだけで、AIが自動で内容を読み取り会社と紐付けます</p>
           </div>
 
-          <div class="manual-card">
-            <div class="manual-card-icon" style="background:#dbeafe;color:#1e40af;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"/></svg>
+          <!-- Steps -->
+          <div class="manual-section-title">はじめかた — 3ステップ</div>
+          <div class="manual-steps">
+            <div class="manual-step">
+              <div class="step-num">1</div>
+              <div class="step-body">
+                <div class="step-title">会社マスタを登録する</div>
+                <div class="step-desc">サイドバーの「会社マスタ」から取引先をあらかじめ登録しておくと、AIが自動で紐付けを行います。CSVで一括インポートも可能です。</div>
+              </div>
             </div>
-            <div class="manual-card-title">AI 自動解析</div>
-            <ul class="manual-card-list">
-              <li>アップロードすると自動で解析が始まります</li>
-              <li>請求書番号・発行日・支払期限・金額・発行者などを抽出</li>
-              <li>会社マスタと照合し、一致度が高い会社を自動で紐付け</li>
-              <li>解析結果が正しくない場合は「再解析」ボタンで再実行できます</li>
-              <li>累計トークン数と推定コストを画面上部に表示します</li>
-            </ul>
-          </div>
-
-          <div class="manual-card">
-            <div class="manual-card-icon" style="background:#dcfce7;color:#166534;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"/></svg>
+            <div class="manual-step">
+              <div class="step-num">2</div>
+              <div class="step-body">
+                <div class="step-title">請求書をアップロードする</div>
+                <div class="step-desc">「請求書管理」のアップロードエリアにファイルをドロップするか、「ファイルを選択」「フォルダを選択」ボタンから選択します。複数ファイルは1件ずつ順番に確認できます。</div>
+              </div>
             </div>
-            <div class="manual-card-title">請求書の編集</div>
-            <ul class="manual-card-list">
-              <li>一覧の「詳細」から解析結果の確認と編集ができます</li>
-              <li>文書種別（請求書 / 領収書）を手動で変更可能</li>
-              <li>紐付け会社を変更すると、S3上のファイルも自動で移動します</li>
-              <li>ステータスを「承認済」に変更して管理できます</li>
-            </ul>
-          </div>
-
-          <div class="manual-card">
-            <div class="manual-card-icon" style="background:#fef9c3;color:#854d0e;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/></svg>
-            </div>
-            <div class="manual-card-title">会社マスタ管理</div>
-            <ul class="manual-card-list">
-              <li>取引先の会社情報（名前・登録番号・住所・電話・メール）を管理</li>
-              <li>登録数が多いほどAIの紐付け精度が向上します</li>
-              <li>CSVインポートで一括登録が可能（「サンプルCSV」から書式を確認）</li>
-              <li>テキスト検索で会社名・登録番号を素早く絞り込み</li>
-            </ul>
-          </div>
-
-          <div class="manual-card">
-            <div class="manual-card-icon" style="background:#f1f5f9;color:var(--text-muted);">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/></svg>
-            </div>
-            <div class="manual-card-title">検索・フィルター</div>
-            <ul class="manual-card-list">
-              <li>ファイル名・発行者名でリアルタイム検索</li>
-              <li>ステータス（解析済 / 承認済）で絞り込み</li>
-              <li>「CSV」ボタンで現在の絞り込み結果をダウンロード</li>
-              <li>1ページ20件表示、ページネーションで移動</li>
-            </ul>
-          </div>
-
-          <div class="manual-card">
-            <div class="manual-card-icon" style="background:#fee2e2;color:#991b1b;">
-              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"/></svg>
-            </div>
-            <div class="manual-card-title">注意事項</div>
-            <ul class="manual-card-list">
-              <li>削除した請求書は元に戻せません</li>
-              <li>アップロードしたファイルはAI解析のため外部APIに送信されます</li>
-              <li>1回のフォルダアップロードは最大50ファイルまでです</li>
-              <li>AIの解析結果は必ず内容を確認してご利用ください</li>
-            </ul>
-          </div>
-
-        </div><!-- /manual-cards -->
-
-        <!-- Status badges reference -->
-        <div class="manual-section-title">ステータスの見かた</div>
-        <div class="card" style="padding:20px 24px;">
-          <div class="manual-status-list">
-            <div class="manual-status-item">
-              <span class="badge badge-processed">解析済</span>
-              <span>AIによる解析が完了した状態。内容を確認・編集してください。</span>
-            </div>
-            <div class="manual-status-item">
-              <span class="badge badge-approved">承認済</span>
-              <span>内容を確認し、承認済みとしてマークした状態。</span>
+            <div class="manual-step">
+              <div class="step-num">3</div>
+              <div class="step-body">
+                <div class="step-title">解析結果を確認・承認する</div>
+                <div class="step-desc">AIが抽出した金額・日付・発行者などを確認し、必要に応じて修正します。「保存」ボタンを押すと承認済みとして保存されます。×ボタンで閉じると解析済みのまま保持されます。</div>
+              </div>
             </div>
           </div>
-        </div>
 
-      </div><!-- /manual-wrap -->
-    </div><!-- /page-manual -->
+          <!-- Feature cards -->
+          <div class="manual-section-title">各機能の説明</div>
+          <div class="manual-cards">
 
-  </div><!-- /content -->
-</div><!-- /main -->
+            <div class="manual-card">
+              <div class="manual-card-icon" style="background:#ede9fe;color:var(--primary);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" />
+                </svg>
+              </div>
+              <div class="manual-card-title">ファイルアップロード</div>
+              <ul class="manual-card-list">
+                <li>対応形式: PDF / JPG / PNG / GIF / WEBP</li>
+                <li>ドラッグ＆ドロップ、またはファイル・フォルダ選択ボタンから追加</li>
+                <li>フォルダ選択時はフォルダ名を除いたファイル名で保存（最大50件）</li>
+                <li>同名ファイルがある場合は「上書きして解析しますか？」の確認を表示。キャンセルで次のファイルへスキップ</li>
+                <li>複数ファイルは1件ずつ解析結果モーダルを表示。次のファイルの解析を裏で並列実行するため待ち時間を最小化</li>
+                <li>アップロード中はプログレスパネルで進捗を確認。完了後5秒で自動で閉じます</li>
+              </ul>
+            </div>
+
+            <div class="manual-card">
+              <div class="manual-card-icon" style="background:#dbeafe;color:#1e40af;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z" />
+                </svg>
+              </div>
+              <div class="manual-card-title">AI 自動解析</div>
+              <ul class="manual-card-list">
+                <li>アップロードすると自動で解析が始まります</li>
+                <li>発行日・支払期限・小計・消費税・合計金額・発行者・登録番号・明細などを抽出</li>
+                <li>会社マスタと照合し、一致度が高い会社を自動で紐付け（スコア表示）</li>
+                <li>次のファイルの解析を裏で並列実行しているため、保存するとすぐ次のモーダルが表示されます</li>
+                <li>解析結果が正しくない場合は「再解析」ボタンで再実行できます</li>
+                <li>累計トークン数と推定コストを画面上部に表示します</li>
+              </ul>
+            </div>
+
+            <div class="manual-card">
+              <div class="manual-card-icon" style="background:#dcfce7;color:#166534;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125" />
+                </svg>
+              </div>
+              <div class="manual-card-title">解析結果の確認・編集</div>
+              <ul class="manual-card-list">
+                <li>一覧の <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="vertical-align:middle"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg> アイコンから詳細モーダルを開けます</li>
+                <li>発行日・支払期限はカレンダーで選択、金額は半角数字のみ入力可</li>
+                <li>小計・消費税を入力すると合計金額が自動で計算されます</li>
+                <li>明細行は追加・削除が可能です</li>
+                <li>紐付け会社を変更するとストレージ上のファイルも自動で移動します</li>
+                <li>「保存」を押すと内容が保存され、ステータスが自動的に承認済みになります</li>
+                <li>×ボタンで閉じると解析済みステータスのまま保持されます</li>
+              </ul>
+            </div>
+
+            <div class="manual-card">
+              <div class="manual-card-icon" style="background:#fef9c3;color:#854d0e;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                </svg>
+              </div>
+              <div class="manual-card-title">会社マスタ管理</div>
+              <ul class="manual-card-list">
+                <li>取引先の会社情報（名前・登録番号・住所・電話・メール）を管理</li>
+                <li>登録数が多いほどAIの紐付け精度が向上します</li>
+                <li>CSVインポートで一括登録が可能（「サンプルCSV」から書式を確認）</li>
+                <li>テキスト検索で会社名・登録番号を素早く絞り込み</li>
+                <li>会社名は必須項目です</li>
+              </ul>
+            </div>
+
+            <div class="manual-card">
+              <div class="manual-card-icon" style="background:#f1f5f9;color:var(--text-muted);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+              </div>
+              <div class="manual-card-title">検索・フィルター・エクスポート</div>
+              <ul class="manual-card-list">
+                <li>ファイル名・発行者名でリアルタイム検索</li>
+                <li>ステータス（解析済 / 承認済）で絞り込み</li>
+                <li>「CSV」ボタンで現在の絞り込み結果をCSVダウンロード</li>
+                <li>1ページ20件表示、ページネーションで移動</li>
+                <li>ストレージリンクボタンでS3の署名付きURLを取得して原本を確認</li>
+              </ul>
+            </div>
+
+            <div class="manual-card">
+              <div class="manual-card-icon" style="background:#fee2e2;color:#991b1b;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24"
+                  stroke-width="1.5" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+                </svg>
+              </div>
+              <div class="manual-card-title">注意事項</div>
+              <ul class="manual-card-list">
+                <li>削除した請求書は元に戻せません</li>
+                <li>アップロードしたファイルはAI解析のため外部APIに送信されます</li>
+                <li>1回のフォルダアップロードは最大50ファイルまでです</li>
+                <li>AIの解析結果は必ず内容を確認してご利用ください</li>
+              </ul>
+            </div>
+
+          </div><!-- /manual-cards -->
+
+          <!-- Status badges reference -->
+          <div class="manual-section-title">ステータスの見かた</div>
+          <div class="card" style="padding:20px 24px;">
+            <div class="manual-status-list">
+              <div class="manual-status-item">
+                <span class="badge badge-processed">解析済</span>
+                <span>AIによる解析が完了した状態。詳細モーダルを開いて内容を確認してください。×で閉じるとこの状態のまま保持されます。</span>
+              </div>
+              <div class="manual-status-item">
+                <span class="badge badge-approved">承認済</span>
+                <span>詳細モーダルで「保存」ボタンを押した状態。内容が確認・承認されたことを示します。</span>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /manual-wrap -->
+      </div><!-- /page-manual -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
 
 
-<!-- ═══════════════════════════════════════════════════════════
+  <!-- ═══════════════════════════════════════════════════════════
      MODALS
 ═══════════════════════════════════════════════════════════ -->
 
-<!-- Invoice detail -->
-<div class="modal-overlay" id="invoice-detail-modal">
-  <div class="modal" style="max-width:680px;">
-    <div class="modal-header">
-      <h3 id="detail-title">請求書詳細</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('invoice-detail-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
+  <!-- Invoice detail -->
+  <div class="modal-overlay" id="invoice-detail-modal">
+    <div class="modal" style="max-width:680px;">
+      <div class="modal-header">
+        <h3 id="detail-title">請求書詳細</h3>
+        <button class="btn btn-ghost btn-icon" onclick="closeModal('invoice-detail-modal')"><svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg></button>
+      </div>
+      <div class="modal-body">
+        <div id="detail-body"></div>
+        <hr class="modal-divider">
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0;">
+            <label>文書種別</label>
+            <select id="detail-doc-type">
+              <option value="">（未判定）</option>
+              <option value="請求書">請求書</option>
+              <option value="領収書">領収書</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label>ステータス</label>
+            <select id="detail-status">
+              <option value="processed">解析済</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-top:12px;margin-bottom:0;">
+          <label>紐付け会社</label>
+          <div class="company-search-wrap">
+            <input type="text" id="detail-company-search" placeholder="会社名で検索..." autocomplete="off" />
+            <input type="hidden" id="detail-company-id" />
+            <ul class="company-dropdown" id="detail-company-dropdown"></ul>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="process-btn" onclick="processCurrentInvoice()" style="display:none;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
+            stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z" />
+          </svg> 再解析
+        </button>
+        <button class="btn btn-outline" id="detail-save-btn" onclick="saveDetailEdit()">保存</button>
+        <button class="btn btn-ghost" onclick="closeModal('invoice-detail-modal')">閉じる</button>
+      </div>
     </div>
-    <div class="modal-body">
-      <div id="detail-body"></div>
-      <hr class="modal-divider">
-      <div class="form-row">
-        <div class="form-group" style="margin-bottom:0;">
+  </div>
+
+  <!-- Invoice edit -->
+  <div class="modal-overlay" id="edit-invoice-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>請求書 編集</h3>
+        <button class="btn btn-ghost btn-icon" onclick="closeModal('edit-invoice-modal')"><svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-invoice-id" />
+        <div class="form-group">
           <label>文書種別</label>
-          <select id="detail-doc-type">
+          <select id="ei-doc-type">
             <option value="">（未判定）</option>
             <option value="請求書">請求書</option>
             <option value="領収書">領収書</option>
           </select>
         </div>
-        <div class="form-group" style="margin-bottom:0;">
+        <div class="form-group">
           <label>ステータス</label>
-          <select id="detail-status">
+          <select id="ei-status">
             <option value="processed">解析済</option>
           </select>
         </div>
-      </div>
-      <div class="form-group" style="margin-top:12px;margin-bottom:0;">
-        <label>紐付け会社</label>
-        <div class="company-search-wrap">
-          <input type="text" id="detail-company-search" placeholder="会社名で検索..." autocomplete="off" />
-          <input type="hidden" id="detail-company-id" />
-          <ul class="company-dropdown" id="detail-company-dropdown"></ul>
+        <div class="form-group">
+          <label>紐付け会社</label>
+          <div class="company-search-wrap">
+            <input type="text" id="ei-company-search" placeholder="会社名で検索..." autocomplete="off" />
+            <input type="hidden" id="ei-company-id" />
+            <ul class="company-dropdown" id="ei-company-dropdown"></ul>
+          </div>
         </div>
       </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('edit-invoice-modal')">キャンセル</button>
+        <button class="btn btn-primary" id="edit-invoice-save-btn" onclick="saveInvoiceEdit()">保存</button>
+      </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" id="process-btn" onclick="processCurrentInvoice()" style="display:none;">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 3v1.5M4.5 8.25H3m18 0h-1.5M4.5 12H3m18 0h-1.5m-15 3.75H3m18 0h-1.5M8.25 19.5V21M12 3v1.5m0 15V21m3.75-18v1.5m0 15V21m-9-1.5h10.5a2.25 2.25 0 0 0 2.25-2.25V6.75a2.25 2.25 0 0 0-2.25-2.25H6.75A2.25 2.25 0 0 0 4.5 6.75v10.5a2.25 2.25 0 0 0 2.25 2.25Zm.75-12h9v9h-9v-9Z"/></svg> 再解析
+  </div>
+
+  <!-- Company master create/edit -->
+  <div class="modal-overlay" id="master-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="master-modal-title">会社マスタ 新規登録</h3>
+        <button class="btn btn-ghost btn-icon" onclick="closeModal('master-modal')"><svg
+            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg></button>
+      </div>
+      <div class="modal-body">
+        <form id="master-form" onsubmit="return false;">
+          <div class="form-group">
+            <label>会社名 <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="m-name" placeholder="株式会社サンプル" required />
+            <p id="m-name-error" style="display:none;color:var(--danger);font-size:12px;margin-top:4px;"></p>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>適格請求書登録番号</label>
+              <input type="text" id="m-reg-num" placeholder="T1234567890123" />
+            </div>
+            <div class="form-group">
+              <label>電話番号</label>
+              <input type="text" id="m-phone" placeholder="03-1234-5678" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>住所</label>
+            <input type="text" id="m-address" placeholder="東京都千代田区..." />
+          </div>
+          <div class="form-group">
+            <label>メールアドレス</label>
+            <input type="email" id="m-email" placeholder="info@example.co.jp" />
+          </div>
+          <div class="form-group">
+            <label>備考</label>
+            <textarea id="m-notes" placeholder="メモ"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('master-modal')">キャンセル</button>
+        <button class="btn btn-primary" id="master-save-btn" onclick="saveMaster()">保存</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- File preview -->
+  <div class="modal-overlay" id="file-preview-modal">
+    <div class="modal" style="max-width:900px;width:95vw;">
+      <div class="modal-header">
+        <h3 id="preview-title"
+          style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100% - 48px);">
+          プレビュー</h3>
+        <button class="btn btn-ghost btn-icon" onclick="closeFilePreview()"><svg xmlns="http://www.w3.org/2000/svg"
+            width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg></button>
+      </div>
+      <div id="preview-body"
+        style="min-height:500px;display:flex;align-items:center;justify-content:center;background:#f8fafc;"></div>
+    </div>
+  </div>
+
+  <!-- Overwrite confirmation -->
+  <div class="modal-overlay" id="overwrite-confirm-modal">
+    <div class="modal" style="max-width:440px;">
+      <div class="modal-header">
+        <h3>上書き確認</h3>
+        <button class="btn btn-ghost btn-icon" onclick="cancelOverwrite()"><svg xmlns="http://www.w3.org/2000/svg"
+            width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:14px;align-items:flex-start;">
+          <div style="color:var(--warning);flex-shrink:0;margin-top:2px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24"
+              stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+            </svg>
+          </div>
+          <div>
+            <p style="font-weight:600;margin-bottom:8px;">重複したファイルがアップされました。上書きして解析しますか？</p>
+            <p style="color:var(--text-muted);font-size:13px;line-height:1.6;">「<span id="overwrite-filename"
+                style="word-break:break-all;"></span>」は既にアップロード済みです。<br>キャンセルするとこのファイルをスキップして次のファイルを処理します。</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="cancelOverwrite()">キャンセル</button>
+        <button class="btn btn-danger" id="overwrite-confirm-btn" onclick="confirmOverwrite()">上書きする</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload progress panel -->
+  <div id="upload-progress-panel" class="upload-progress-panel">
+    <div class="progress-panel-header">
+      <div class="progress-panel-title">
+        <span class="spinner" id="progress-spinner"></span>
+        <span id="progress-title">アップロード中...</span>
+      </div>
+      <button class="btn btn-ghost btn-icon" id="progress-close-btn" onclick="closeProgressPanel()"
+        style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24"
+          stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+        </svg>
       </button>
-      <button class="btn btn-outline" id="detail-save-btn" onclick="saveDetailEdit()">保存</button>
-      <button class="btn btn-ghost" onclick="closeModal('invoice-detail-modal')">閉じる</button>
     </div>
-  </div>
-</div>
-
-<!-- Invoice edit -->
-<div class="modal-overlay" id="edit-invoice-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3>請求書 編集</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('edit-invoice-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-bar-fill"></div>
     </div>
-    <div class="modal-body">
-      <input type="hidden" id="edit-invoice-id" />
-      <div class="form-group">
-        <label>文書種別</label>
-        <select id="ei-doc-type">
-          <option value="">（未判定）</option>
-          <option value="請求書">請求書</option>
-          <option value="領収書">領収書</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>ステータス</label>
-        <select id="ei-status">
-          <option value="processed">解析済</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>紐付け会社</label>
-        <div class="company-search-wrap">
-          <input type="text" id="ei-company-search" placeholder="会社名で検索..." autocomplete="off" />
-          <input type="hidden" id="ei-company-id" />
-          <ul class="company-dropdown" id="ei-company-dropdown"></ul>
+    <div class="progress-panel-body">
+      <div class="progress-stats">
+        <div class="progress-stat ps-total">
+          <span class="ps-num" id="ps-done">0</span>
+          <span>/</span>
+          <span class="ps-num" id="ps-total">0</span>
+          <span>件</span>
+        </div>
+        <div class="progress-stat-divider"></div>
+        <div class="progress-stat ps-ok">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24"
+            stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+          </svg>
+          <span class="ps-num" id="ps-ok">0</span>
+        </div>
+        <div class="progress-stat ps-err">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24"
+            stroke-width="2.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+          <span class="ps-num" id="ps-err">0</span>
         </div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('edit-invoice-modal')">キャンセル</button>
-      <button class="btn btn-primary" id="edit-invoice-save-btn" onclick="saveInvoiceEdit()">保存</button>
-    </div>
-  </div>
-</div>
-
-<!-- Company master create/edit -->
-<div class="modal-overlay" id="master-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <h3 id="master-modal-title">会社マスタ 新規登録</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeModal('master-modal')"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <form id="master-form" onsubmit="return false;">
-        <div class="form-group">
-          <label>会社名 <span style="color:var(--danger)">*</span></label>
-          <input type="text" id="m-name" placeholder="株式会社サンプル" required />
-          <p id="m-name-error" style="display:none;color:var(--danger);font-size:12px;margin-top:4px;"></p>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>適格請求書登録番号</label>
-            <input type="text" id="m-reg-num" placeholder="T1234567890123" />
-          </div>
-          <div class="form-group">
-            <label>電話番号</label>
-            <input type="text" id="m-phone" placeholder="03-1234-5678" />
-          </div>
-        </div>
-        <div class="form-group">
-          <label>住所</label>
-          <input type="text" id="m-address" placeholder="東京都千代田区..." />
-        </div>
-        <div class="form-group">
-          <label>メールアドレス</label>
-          <input type="email" id="m-email" placeholder="info@example.co.jp" />
-        </div>
-        <div class="form-group">
-          <label>備考</label>
-          <textarea id="m-notes" placeholder="メモ"></textarea>
-        </div>
-      </form>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal('master-modal')">キャンセル</button>
-      <button class="btn btn-primary" id="master-save-btn" onclick="saveMaster()">保存</button>
-    </div>
-  </div>
-</div>
-
-
-<!-- File preview -->
-<div class="modal-overlay" id="file-preview-modal">
-  <div class="modal" style="max-width:900px;width:95vw;">
-    <div class="modal-header">
-      <h3 id="preview-title" style="font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:calc(100% - 48px);">プレビュー</h3>
-      <button class="btn btn-ghost btn-icon" onclick="closeFilePreview()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
-    </div>
-    <div id="preview-body" style="min-height:500px;display:flex;align-items:center;justify-content:center;background:#f8fafc;"></div>
-  </div>
-</div>
-
-<!-- Overwrite confirmation -->
-<div class="modal-overlay" id="overwrite-confirm-modal">
-  <div class="modal" style="max-width:440px;">
-    <div class="modal-header">
-      <h3>上書き確認</h3>
-      <button class="btn btn-ghost btn-icon" onclick="cancelOverwrite()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex;gap:14px;align-items:flex-start;">
-        <div style="color:var(--warning);flex-shrink:0;margin-top:2px;">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/></svg>
-        </div>
-        <div>
-          <p style="font-weight:600;margin-bottom:8px;">重複したファイルがアップされました。上書きして解析しますか？</p>
-          <p style="color:var(--text-muted);font-size:13px;line-height:1.6;">「<span id="overwrite-filename" style="word-break:break-all;"></span>」は既にアップロード済みです。<br>キャンセルするとこのファイルをスキップして次のファイルを処理します。</p>
-        </div>
+      <div class="progress-current-wrap">
+        <span class="progress-current-label">処理中</span>
+        <span class="progress-current" id="progress-current"></span>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="cancelOverwrite()">キャンセル</button>
-      <button class="btn btn-danger" id="overwrite-confirm-btn" onclick="confirmOverwrite()">上書きする</button>
+      <div class="progress-log" id="progress-log"></div>
     </div>
   </div>
-</div>
 
-<!-- Upload progress panel -->
-<div id="upload-progress-panel" class="upload-progress-panel">
-  <div class="progress-panel-header">
-    <div class="progress-panel-title">
-      <span class="spinner" id="progress-spinner"></span>
-      <span id="progress-title">アップロード中...</span>
-    </div>
-    <button class="btn btn-ghost btn-icon" id="progress-close-btn" onclick="closeProgressPanel()" style="display:none;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
-    </button>
-  </div>
-  <div class="progress-bar-track"><div class="progress-bar-fill" id="progress-bar-fill"></div></div>
-  <div class="progress-panel-body">
-    <div class="progress-stats">
-      <div class="progress-stat ps-total">
-        <span class="ps-num" id="ps-done">0</span>
-        <span>/</span>
-        <span class="ps-num" id="ps-total">0</span>
-        <span>件</span>
-      </div>
-      <div class="progress-stat-divider"></div>
-      <div class="progress-stat ps-ok">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5"/></svg>
-        <span class="ps-num" id="ps-ok">0</span>
-      </div>
-      <div class="progress-stat ps-err">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
-        <span class="ps-num" id="ps-err">0</span>
-      </div>
-    </div>
-    <div class="progress-current-wrap">
-      <span class="progress-current-label">処理中</span>
-      <span class="progress-current" id="progress-current"></span>
-    </div>
-    <div class="progress-log" id="progress-log"></div>
-  </div>
-</div>
+  <!-- Toast container -->
+  <div id="toast-container"></div>
 
-<!-- Toast container -->
-<div id="toast-container"></div>
+  <script src="/static/vendor/flatpickr.min.js"></script>
+  <script src="/static/vendor/flatpickr-ja.js"></script>
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/invoices.js"></script>
+  <script src="/static/js/masters.js"></script>
 
-<script src="/static/vendor/flatpickr.min.js"></script>
-<script src="/static/vendor/flatpickr-ja.js"></script>
-<script src="/static/js/api.js"></script>
-<script src="/static/js/invoices.js"></script>
-<script src="/static/js/masters.js"></script>
-
-<script src="/static/js/app.js"></script>
+  <script src="/static/js/app.js"></script>
 
 </body>
+
 </html>
