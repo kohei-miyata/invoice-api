@@ -16,6 +16,150 @@
 
 ---
 
+## アップロードから保存までの処理フロー
+
+ファイルを選択してから「保存」ボタンを押すまでの一連の処理。ファイル名と関数の呼び出し順を示す。
+
+### 1. ファイル選択（ユーザー操作）
+
+| 操作 | ファイル | 関数 |
+|------|---------|------|
+| ドラッグ&ドロップ / ファイルピッカー | `invoices.js` | `initUploadZone()` のイベントハンドラ → `handleFiles(files)` |
+| フォルダ選択ボタン | `invoices.js` | `handleFolderInput(files)` → `handleFiles(files)` |
+
+### 2. キュー構築と並列プリフェッチ開始
+
+```
+handleFiles(files)  [invoices.js]
+  ├─ singleQueue = fileArr.slice(1)      // 2枚目以降をキューに積む
+  ├─ showProgressPanel()                 // プログレスパネル表示
+  ├─ startPrefetch()                     // ★ 2枚目の解析を裏で先行開始
+  └─ uploadInvoice(fileArr[0])           // 1枚目の処理へ
+```
+
+**startPrefetch()** は `singleQueue[0]`（2枚目）の `POST /api/invoices` を即座に開始し、結果を `prefetch.promise` に保持する。ユーザーが1枚目を確認している間に解析が完了するため、保存後すぐ次のモーダルが表示できる。
+
+### 3. 重複チェック
+
+```
+uploadInvoice(file)  [invoices.js]
+  ├─ bname()で両辺を正規化してファイル名比較
+  ├─ 重複あり → overwrite-confirm-modal を表示して中断
+  │     ├─ OK押下   → confirmOverwrite() → 既存レコード DELETE → doUpload(file)
+  │     └─ キャンセル → cancelOverwrite() → singleQueue の次ファイルへスキップ
+  └─ 重複なし → doUpload(file)
+```
+
+### 4. アップロードと AI 解析（フロントエンド）
+
+```
+doUpload(file)  [invoices.js]
+  ├─ new File([file], cleanName)          // フォルダパスを除いたファイル名に正規化
+  ├─ FormData に file をセット
+  └─ Promise.all([
+       api.uploadInvoice(fd),             // POST /api/invoices  [api.js]
+       api.listCompanies()                // GET  /api/masters   [api.js]
+     ])
+```
+
+### 5. アップロードと AI 解析（バックエンド）
+
+```
+POST /api/invoices
+  └─ upload_invoice(request, file)  [routers/invoices.py]
+       ├─ ファイル名からパスを除去 (rsplit)
+       ├─ 拡張子チェック (pdf/jpg/png/gif/webp のみ許可)
+       ├─ file.read() でバイナリ取得
+       │
+       ├─ claude_svc.extract_invoice_data(content, ext)  [services/claude.py]
+       │     ├─ base64 エンコード
+       │     ├─ Anthropic API: messages.create (claude-haiku-4-5)
+       │     │     └─ PDF → document タイプ / 画像 → image タイプ
+       │     └─ _parse_json_response() でテキストから JSON を抽出
+       │           └─ json.loads() 失敗時は raw_decode() でフォールバック
+       │
+       ├─ DB から companies 一覧取得
+       │
+       ├─ claude_svc.match_company(extracted, companies)  [services/claude.py]
+       │     ├─ Anthropic API: messages.create
+       │     └─ 上位3件の照合候補をスコア付きで返す
+       │
+       ├─ score >= 0.5 の最上位候補を company_id として自動紐付け
+       ├─ _build_s3_key() で保存先パスを生成
+       │     └─ tenants/{slug}/{company_id}/{doc_type}/{uuid}.{ext}
+       ├─ s3_svc.upload_file()  [services/s3.py]  → AWS S3 にアップロード
+       ├─ INSERT INTO invoices (extracted_data, ai_input_tokens, ...) → DB COMMIT
+       └─ {invoice, match_candidates} を返却
+```
+
+### 6. モーダル表示
+
+```
+doUpload() 続き  [invoices.js]
+  ├─ loadInvoices()                      // 一覧を再取得してテーブルを更新
+  ├─ renderInvoiceDetail(result)         // モーダルの各フィールドに抽出結果をセット
+  ├─ openModal("invoice-detail-modal")   // 詳細・編集モーダルを表示  [app.js]
+  └─ startPrefetch()                     // 次のファイル（3枚目）の解析を先行開始
+```
+
+2枚目以降は **processNextSingleFile()** が担当する:
+
+```
+processNextSingleFile()  [invoices.js]
+  ├─ singleQueue から次ファイルを取り出す
+  ├─ prefetch.file === file の場合
+  │     ├─ prefetch.promise を await（多くの場合すでに完了済み）
+  │     ├─ renderInvoiceDetail(result)
+  │     └─ openModal("invoice-detail-modal")   // ほぼ即座に表示
+  └─ prefetch なし（重複等でスキップされた場合）
+        └─ uploadInvoice(file)  → ステップ 3 へ戻る
+```
+
+### 7. ユーザーが編集して「保存」
+
+```
+saveDetailEdit()  [invoices.js]
+  ├─ DOM から全フィールドの値を収集
+  │     ├─ document_type / status / company_id
+  │     ├─ invoice_date / due_date / vendor_name / ... (extracted_data フィールド)
+  │     └─ line_items: table の各行から配列を構築
+  ├─ api.updateInvoice(id, body)          // PUT /api/invoices/{id}  [api.js]
+  │     └─ update_invoice()  [routers/invoices.py]
+  │           ├─ UPDATE invoices SET extracted_data=..., status=..., company_id=...
+  │           ├─ company_id が変わった場合 → s3_svc.move_file() で S3 パスを変更
+  │           └─ COMMIT
+  ├─ loadInvoices()                       // 一覧を再取得
+  └─ closeModal("invoice-detail-modal")   // modal:closed イベントを dispatch  [app.js]
+        └─ イベントリスナー [invoices.js:785]
+              └─ processNextSingleFile()  // 次のファイルへ → ステップ 6 へ戻る
+```
+
+### フロー全体図（複数ファイルの場合）
+
+```
+handleFiles([file1, file2, file3])
+  ├─ startPrefetch(file2) ─────────────────────────── 裏で file2 を解析中...
+  └─ uploadInvoice(file1)
+       └─ doUpload(file1)
+            ├─ POST /api/invoices (file1)
+            ├─ renderInvoiceDetail / openModal
+            └─ startPrefetch(file3) ─────────────────── 裏で file3 を解析中...
+                                    ↓
+                             [ユーザーが file1 を確認・保存]
+                                    ↓
+                             saveDetailEdit() → closeModal
+                                    ↓
+                             processNextSingleFile()
+                                    ├─ prefetch(file2) が完了済み
+                                    └─ renderInvoiceDetail / openModal (即時表示)
+                                                      ↓
+                                              [ユーザーが file2 を確認・保存]
+                                                      ↓
+                                              processNextSingleFile() → file3 ...
+```
+
+---
+
 ## アーキテクチャ
 
 ### ローカル開発
