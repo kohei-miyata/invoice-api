@@ -570,6 +570,25 @@ function renderInvoiceDetail(inv) {
   const processBtn = document.getElementById("process-btn");
   processBtn.style.display = "inline-flex";
   processBtn.innerHTML = `${icons.refresh} 再解析`;
+
+  ["di-invoice-date", "di-due-date"].forEach(id => {
+    flatpickr(document.getElementById(id), {
+      dateFormat: "Y-m-d",
+      locale: "ja",
+      allowInput: true,
+    });
+  });
+
+  ["di-subtotal", "di-tax-amount", "di-total-amount"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("focus", () => { el.value = el.value.replace(/,/g, ""); });
+    el.addEventListener("blur",  () => {
+      const n = Number(el.value);
+      if (el.value !== "" && !isNaN(n)) el.value = n.toLocaleString("ja-JP");
+    });
+    el.addEventListener("input", () => { el.value = el.value.replace(/[^\d]/g, ""); });
+  });
 }
 
 async function processCurrentInvoice() {
