@@ -23,6 +23,9 @@ let singleQueue = [];
 /* pre-fetched next result: { file, promise: Promise<{result,companies}|{error}> } */
 let prefetch = null;
 
+/* Strip folder path from a filename string (handles both / and \) */
+const bname = s => (s || "").split("/").pop().split("\\").pop();
+
 function showProgressPanel() {
   const panel = document.getElementById("upload-progress-panel");
   panel.classList.add("visible");
@@ -349,11 +352,11 @@ async function handleFiles(files) {
 }
 
 async function uploadInvoice(file) {
-  const existing = invoiceList.find(inv => inv.original_filename === file.name);
+  const existing = invoiceList.find(inv => bname(inv.original_filename) === bname(file.name));
   if (existing) {
     pendingUploadFile  = file;
     pendingOverwriteId = existing.id;
-    document.getElementById("overwrite-filename").textContent = file.name;
+    document.getElementById("overwrite-filename").textContent = bname(file.name);
     openModal("overwrite-confirm-modal");
     return;
   }
@@ -388,7 +391,7 @@ function cancelOverwrite() {
   pendingOverwriteId = null;
   if (file) {
     batchFailed++;
-    addProgressLog(file.name, "skip", "上書きキャンセル");
+    addProgressLog(bname(file.name), "skip", "上書きキャンセル");
     updateProgressBar();
     if (!singleQueue.length) finalizeProgressPanel(batchFailed > 0);
   }
@@ -398,9 +401,9 @@ function cancelOverwrite() {
 function startPrefetch() {
   if (!singleQueue.length || prefetch) return;
   const file = singleQueue[0];
-  if (invoiceList.some(inv => inv.original_filename === file.name)) return; // duplicate — needs confirmation first
+  if (invoiceList.some(inv => bname(inv.original_filename) === bname(file.name))) return; // duplicate — needs confirmation first
   const fd = new FormData();
-  fd.append("file", file);
+  fd.append("file", new File([file], bname(file.name), { type: file.type }));
   let pending = true;
   const promise = Promise.all([api.uploadInvoice(fd), api.listCompanies()])
     .then(([result, companies]) => ({ result, companies }))
@@ -410,17 +413,19 @@ function startPrefetch() {
 }
 
 async function doUpload(file) {
+  const cleanName = bname(file.name);
+  const cleanFile = new File([file], cleanName, { type: file.type });
   const fd = new FormData();
-  fd.append("file", file);
-  setProgressCurrent(file.name);
+  fd.append("file", cleanFile);
+  setProgressCurrent(cleanName);
   try {
     const [result, companies] = await Promise.all([api.uploadInvoice(fd), api.listCompanies()]);
     companiesList = companies;
     batchDone++;
-    addProgressLog(file.name, "success");
+    addProgressLog(cleanName, "success");
     updateProgressBar();
     if (!singleQueue.length) finalizeProgressPanel(batchFailed > 0);
-    toast(`「${file.name}」の解析が完了しました`, "success");
+    toast(`「${cleanName}」の解析が完了しました`, "success");
     loadInvoices();
     loadUsageStats();
     renderInvoiceDetail(result);
@@ -429,7 +434,7 @@ async function doUpload(file) {
     startPrefetch();
   } catch (e) {
     batchFailed++;
-    addProgressLog(file.name, "error", e.message);
+    addProgressLog(cleanName, "error", e.message);
     updateProgressBar();
     if (!singleQueue.length) finalizeProgressPanel(true);
     toast(`アップロード失敗: ${e.message}`, "error");
@@ -445,13 +450,14 @@ async function processNextSingleFile() {
     const p = prefetch.promise;
     const wasPending = prefetch.pending;
     prefetch = null;
-    if (wasPending) toast(`「${file.name}」を解析中です — 完了後にモーダルを表示します`, "info");
+    const cleanName = bname(file.name);
+    if (wasPending) toast(`「${cleanName}」を解析中です — 完了後にモーダルを表示します`, "info");
     // Await silently — open result modal automatically when ready
     const data = await p;
     const errMsg = data?.error || (!data?.result ? "アップロードに失敗しました" : null);
     if (errMsg) {
       batchFailed++;
-      addProgressLog(file.name, "error", errMsg);
+      addProgressLog(cleanName, "error", errMsg);
       updateProgressBar();
       if (!singleQueue.length) finalizeProgressPanel(true);
       toast(`アップロード失敗: ${errMsg}`, "error");
@@ -461,10 +467,10 @@ async function processNextSingleFile() {
     const { result, companies } = data;
     companiesList = companies;
     batchDone++;
-    addProgressLog(file.name, "success");
+    addProgressLog(cleanName, "success");
     updateProgressBar();
     if (!singleQueue.length) finalizeProgressPanel(batchFailed > 0);
-    toast(`「${file.name}」の解析が完了しました`, "success");
+    toast(`「${cleanName}」の解析が完了しました`, "success");
     loadInvoices();
     loadUsageStats();
     renderInvoiceDetail(result);

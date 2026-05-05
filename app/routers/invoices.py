@@ -105,6 +105,7 @@ async def usage_stats(request: Request):
 
 @router.post("", response_model=InvoiceWithMatches, status_code=201)
 async def upload_invoice(request: Request, file: UploadFile = File(...)):
+    file.filename = (file.filename or "").rsplit("/", 1)[-1].rsplit("\\", 1)[-1]
     ext = (file.filename or "").rsplit(".", 1)[-1].lower()
     if ext not in ALLOWED_TYPES:
         raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")

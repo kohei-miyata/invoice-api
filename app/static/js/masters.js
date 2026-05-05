@@ -133,10 +133,16 @@ function filterMasters() {
   ));
 }
 
+function clearMasterErrors() {
+  const e = document.getElementById("m-name-error");
+  if (e) { e.style.display = "none"; e.textContent = ""; }
+}
+
 function openCreateMaster() {
   editingMasterId = null;
   document.getElementById("master-modal-title").textContent = "会社マスタ 新規登録";
   document.getElementById("master-form").reset();
+  clearMasterErrors();
   openModal("master-modal");
 }
 
@@ -151,6 +157,7 @@ function openEditMaster(id) {
   document.getElementById("m-phone").value           = c.phone || "";
   document.getElementById("m-email").value           = c.email || "";
   document.getElementById("m-notes").value           = c.notes || "";
+  clearMasterErrors();
   openModal("master-modal");
 }
 
@@ -164,7 +171,14 @@ async function saveMaster() {
     notes:               document.getElementById("m-notes").value.trim() || null,
   };
 
-  if (!body.name) { toast("会社名は必須です", "error"); return; }
+  const nameErr = document.getElementById("m-name-error");
+  if (!body.name) {
+    nameErr.textContent = "会社名は必須です";
+    nameErr.style.display = "block";
+    document.getElementById("m-name").focus();
+    return;
+  }
+  nameErr.style.display = "none";
 
   const btn = document.getElementById("master-save-btn");
   btn.disabled = true;
