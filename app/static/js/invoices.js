@@ -530,7 +530,8 @@ function renderInvoiceDetail(inv) {
       </div>
       <div class="form-group">
         <label>登録番号</label>
-        <input type="text" id="di-vendor-reg-num" value="${esc(d.vendor_registration_number || '')}">
+        <input type="text" id="di-vendor-reg-num" value="${esc(d.vendor_registration_number || '')}" placeholder="T1234567890123">
+        <p id="di-vendor-reg-num-error" style="display:none;color:var(--red,#e53e3e);font-size:12px;margin-top:4px;"></p>
       </div>
       <div class="form-group">
         <label>小計</label>
@@ -633,10 +634,20 @@ async function saveInlineCompany() {
     return;
   }
 
+  const regEl  = document.getElementById("inline-company-reg");
+  const regErr = document.getElementById("inline-company-reg-error");
+  const reg    = regEl.value.trim();
+  regErr.style.display = "none";
+  if (reg && !/^T\d{13}$/.test(reg)) {
+    regErr.textContent   = "「T」＋13桁の数字で入力してください（例：T1234567890123）";
+    regErr.style.display = "block";
+    regEl.focus();
+    return;
+  }
+
   const btn = document.getElementById("inline-company-save-btn");
   btn.disabled = true;
   try {
-    const reg     = document.getElementById("inline-company-reg").value.trim();
     const company = await api.createCompany({ name, registration_number: reg || null });
     companiesList.push(company);
     setCompanySearch("detail-company-search", "detail-company-id", company.id);
@@ -687,6 +698,15 @@ async function saveDetailEdit() {
     const errEl = document.getElementById("detail-company-error");
     if (errEl) { errEl.textContent = "紐付け会社は必須です"; errEl.style.display = "block"; }
     document.getElementById("detail-company-search")?.focus();
+    return;
+  }
+
+  const vendorReg    = document.getElementById("di-vendor-reg-num")?.value.trim() || "";
+  const vendorRegErr = document.getElementById("di-vendor-reg-num-error");
+  if (vendorRegErr) vendorRegErr.style.display = "none";
+  if (vendorReg && !/^T\d{13}$/.test(vendorReg)) {
+    if (vendorRegErr) { vendorRegErr.textContent = "「T」＋13桁の数字で入力してください（例：T1234567890123）"; vendorRegErr.style.display = "block"; }
+    document.getElementById("di-vendor-reg-num")?.focus();
     return;
   }
 

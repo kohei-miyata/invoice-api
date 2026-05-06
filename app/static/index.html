@@ -488,6 +488,7 @@
             <div class="form-group" style="margin-bottom:8px;">
               <label>登録番号</label>
               <input type="text" id="inline-company-reg" placeholder="T0000000000000" />
+              <p id="inline-company-reg-error" style="display:none;color:var(--red,#e53e3e);font-size:12px;margin-top:2px;"></p>
             </div>
             <div style="display:flex;gap:8px;">
               <button type="button" class="btn btn-primary btn-sm" id="inline-company-save-btn" onclick="saveInlineCompany()">登録して選択</button>
@@ -575,6 +576,7 @@
             <div class="form-group">
               <label>適格請求書登録番号</label>
               <input type="text" id="m-reg-num" placeholder="T1234567890123" />
+              <p id="m-reg-num-error" style="display:none;color:var(--danger);font-size:12px;margin-top:4px;"></p>
             </div>
             <div class="form-group">
               <label>電話番号</label>

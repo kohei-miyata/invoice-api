@@ -134,9 +134,13 @@ function filterMasters() {
 }
 
 function clearMasterErrors() {
-  const e = document.getElementById("m-name-error");
-  if (e) { e.style.display = "none"; e.textContent = ""; }
+  ["m-name-error", "m-reg-num-error"].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) { e.style.display = "none"; e.textContent = ""; }
+  });
 }
+
+const REG_NUM_RE = /^T\d{13}$/;
 
 function openCreateMaster() {
   editingMasterId = null;
@@ -179,6 +183,15 @@ async function saveMaster() {
     return;
   }
   nameErr.style.display = "none";
+
+  const regErr = document.getElementById("m-reg-num-error");
+  if (body.registration_number && !REG_NUM_RE.test(body.registration_number)) {
+    regErr.textContent  = "「T」＋13桁の数字で入力してください（例：T1234567890123）";
+    regErr.style.display = "block";
+    document.getElementById("m-reg-num").focus();
+    return;
+  }
+  regErr.style.display = "none";
 
   const btn = document.getElementById("master-save-btn");
   btn.disabled = true;
