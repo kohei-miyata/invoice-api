@@ -147,6 +147,10 @@ function initCompanySearch(inputId, hiddenId, dropdownId) {
     document.getElementById(hiddenId).value = li.dataset.id;
     input.value = li.dataset.name;
     dropdown.style.display = "none";
+    if (hiddenId === "detail-company-id") {
+      const err = document.getElementById("detail-company-error");
+      if (err) { err.style.display = "none"; err.textContent = ""; }
+    }
     e.preventDefault();
   });
   document.addEventListener("click", e => {
@@ -600,6 +604,51 @@ function renderInvoiceDetail(inv) {
   if (totalEl && !totalEl.value) recalcTotal();
 }
 
+function toggleInlineCompanyForm() {
+  const form = document.getElementById("inline-company-form");
+  if (!form) return;
+  const isVisible = form.style.display !== "none";
+  form.style.display = isVisible ? "none" : "block";
+  if (!isVisible) {
+    document.getElementById("inline-company-name").value = "";
+    document.getElementById("inline-company-reg").value  = "";
+    const nameErr = document.getElementById("inline-company-name-error");
+    if (nameErr) { nameErr.style.display = "none"; nameErr.textContent = ""; }
+    document.getElementById("inline-company-name").focus();
+  }
+}
+
+async function saveInlineCompany() {
+  const nameEl  = document.getElementById("inline-company-name");
+  const nameErr = document.getElementById("inline-company-name-error");
+  const name    = nameEl.value.trim();
+
+  nameErr.style.display = "none";
+  if (!name) {
+    nameErr.textContent  = "会社名は必須です";
+    nameErr.style.display = "block";
+    nameEl.focus();
+    return;
+  }
+
+  const btn = document.getElementById("inline-company-save-btn");
+  btn.disabled = true;
+  try {
+    const reg     = document.getElementById("inline-company-reg").value.trim();
+    const company = await api.createCompany({ name, registration_number: reg || null });
+    companiesList.push(company);
+    setCompanySearch("detail-company-search", "detail-company-id", company.id);
+    const compErr = document.getElementById("detail-company-error");
+    if (compErr) { compErr.style.display = "none"; compErr.textContent = ""; }
+    toggleInlineCompanyForm();
+    toast(`「${name}」を登録して選択しました`, "success");
+  } catch (e) {
+    toast("会社の登録に失敗しました: " + e.message, "error");
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 function recalcTotal() {
   const sub = Number((document.getElementById("di-subtotal")?.value || "").replace(/,/g, "")) || 0;
   const tax = Number((document.getElementById("di-tax-amount")?.value || "").replace(/,/g, "")) || 0;
@@ -631,6 +680,13 @@ async function saveDetailEdit() {
 
   const docType   = document.getElementById("detail-doc-type").value;
   const companyId = document.getElementById("detail-company-id").value;
+
+  if (!companyId) {
+    const errEl = document.getElementById("detail-company-error");
+    if (errEl) { errEl.textContent = "紐付け会社は必須です"; errEl.style.display = "block"; }
+    document.getElementById("detail-company-search")?.focus();
+    return;
+  }
 
   const toStr = elId => document.getElementById(elId)?.value.trim() || null;
   const toNum = elId => { const v = (document.getElementById(elId)?.value || "").replace(/,/g, ""); return v !== "" ? Number(v) : null; };

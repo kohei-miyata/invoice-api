@@ -468,11 +468,31 @@
           </div>
         </div>
         <div class="form-group" style="margin-top:12px;margin-bottom:0;">
-          <label>紐付け会社</label>
+          <label style="display:flex;justify-content:space-between;align-items:center;">
+            <span>紐付け会社 <span style="color:var(--red,#e53e3e)">*</span></span>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="toggleInlineCompanyForm()">＋ 新規登録</button>
+          </label>
           <div class="company-search-wrap">
             <input type="text" id="detail-company-search" placeholder="会社名で検索..." autocomplete="off" />
             <input type="hidden" id="detail-company-id" />
             <ul class="company-dropdown" id="detail-company-dropdown"></ul>
+          </div>
+          <p id="detail-company-error" style="display:none;color:var(--red,#e53e3e);font-size:12px;margin-top:4px;"></p>
+          <div id="inline-company-form" style="display:none;margin-top:8px;border:1px solid var(--border);border-radius:6px;padding:12px;background:var(--surface-2,#f8f8f8);">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px;">新規会社登録</div>
+            <div class="form-group">
+              <label>会社名 <span style="color:var(--red,#e53e3e)">*</span></label>
+              <input type="text" id="inline-company-name" placeholder="例：株式会社サンプル" />
+              <p id="inline-company-name-error" style="display:none;color:var(--red,#e53e3e);font-size:12px;margin-top:2px;"></p>
+            </div>
+            <div class="form-group" style="margin-bottom:8px;">
+              <label>登録番号</label>
+              <input type="text" id="inline-company-reg" placeholder="T0000000000000" />
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button type="button" class="btn btn-primary btn-sm" id="inline-company-save-btn" onclick="saveInlineCompany()">登録して選択</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="toggleInlineCompanyForm()">キャンセル</button>
+            </div>
           </div>
         </div>
       </div>
