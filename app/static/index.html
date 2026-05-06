@@ -485,10 +485,28 @@
               <input type="text" id="inline-company-name" placeholder="例：株式会社サンプル" />
               <p id="inline-company-name-error" style="display:none;color:var(--red,#e53e3e);font-size:12px;margin-top:2px;"></p>
             </div>
-            <div class="form-group" style="margin-bottom:8px;">
+            <div class="form-group">
               <label>登録番号</label>
               <input type="text" id="inline-company-reg" placeholder="T0000000000000" />
               <p id="inline-company-reg-error" style="display:none;color:var(--red,#e53e3e);font-size:12px;margin-top:2px;"></p>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>電話番号</label>
+                <input type="text" id="inline-company-phone" placeholder="03-1234-5678" />
+              </div>
+              <div class="form-group">
+                <label>メールアドレス</label>
+                <input type="email" id="inline-company-email" placeholder="info@example.co.jp" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>住所</label>
+              <input type="text" id="inline-company-address" placeholder="東京都千代田区..." />
+            </div>
+            <div class="form-group" style="margin-bottom:8px;">
+              <label>備考</label>
+              <textarea id="inline-company-notes" placeholder="メモ" style="min-height:48px;"></textarea>
             </div>
             <div style="display:flex;gap:8px;">
               <button type="button" class="btn btn-primary btn-sm" id="inline-company-save-btn" onclick="saveInlineCompany()">登録して選択</button>

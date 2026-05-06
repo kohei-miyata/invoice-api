@@ -613,10 +613,13 @@ function toggleInlineCompanyForm() {
   const isVisible = form.style.display !== "none";
   form.style.display = isVisible ? "none" : "block";
   if (!isVisible) {
-    document.getElementById("inline-company-name").value = "";
-    document.getElementById("inline-company-reg").value  = "";
-    const nameErr = document.getElementById("inline-company-name-error");
-    if (nameErr) { nameErr.style.display = "none"; nameErr.textContent = ""; }
+    ["inline-company-name","inline-company-reg","inline-company-phone",
+     "inline-company-email","inline-company-address","inline-company-notes"]
+      .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+    ["inline-company-name-error","inline-company-reg-error"].forEach(id => {
+      const e = document.getElementById(id);
+      if (e) { e.style.display = "none"; e.textContent = ""; }
+    });
     document.getElementById("inline-company-name").focus();
   }
 }
@@ -648,7 +651,15 @@ async function saveInlineCompany() {
   const btn = document.getElementById("inline-company-save-btn");
   btn.disabled = true;
   try {
-    const company = await api.createCompany({ name, registration_number: reg || null });
+    const g = id => document.getElementById(id)?.value.trim() || null;
+    const company = await api.createCompany({
+      name,
+      registration_number: reg || null,
+      phone:   g("inline-company-phone"),
+      email:   g("inline-company-email"),
+      address: g("inline-company-address"),
+      notes:   g("inline-company-notes"),
+    });
     companiesList.push(company);
     setCompanySearch("detail-company-search", "detail-company-id", company.id);
     const compErr = document.getElementById("detail-company-error");
