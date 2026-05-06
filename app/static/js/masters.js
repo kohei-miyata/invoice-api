@@ -205,7 +205,17 @@ async function saveMaster() {
     closeModal("master-modal");
     loadMasters();
   } catch (e) {
-    toast("保存に失敗しました: " + e.message, "error");
+    if (e.message.includes("会社名")) {
+      const err = document.getElementById("m-name-error");
+      if (err) { err.textContent = e.message; err.style.display = "block"; }
+      document.getElementById("m-name").focus();
+    } else if (e.message.includes("登録番号")) {
+      const err = document.getElementById("m-reg-num-error");
+      if (err) { err.textContent = e.message; err.style.display = "block"; }
+      document.getElementById("m-reg-num").focus();
+    } else {
+      toast("保存に失敗しました: " + e.message, "error");
+    }
   } finally {
     btn.disabled = false;
   }

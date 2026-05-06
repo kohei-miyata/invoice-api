@@ -24,9 +24,31 @@ async def list_companies(request: Request):
         return [dict(r) for r in rows]
 
 
+async def _check_duplicate(session, name: str, registration_number, exclude_id=None):
+    params = {"name": name, "reg": registration_number}
+    exclude_clause = "AND id != :exclude_id" if exclude_id else ""
+    if exclude_id:
+        params["exclude_id"] = str(exclude_id)
+    row = (await session.execute(
+        text(f"""
+            SELECT name, registration_number FROM companies
+            WHERE (name = :name OR (registration_number IS NOT NULL AND registration_number = :reg AND :reg IS NOT NULL))
+            {exclude_clause}
+            LIMIT 1
+        """),
+        params,
+    )).mappings().one_or_none()
+    if not row:
+        return
+    if row["name"] == name:
+        raise HTTPException(status_code=409, detail="同じ会社名がすでに登録されています")
+    raise HTTPException(status_code=409, detail="同じ登録番号がすでに登録されています")
+
+
 @router.post("", response_model=Company, status_code=201)
 async def create_company(body: CompanyCreate, request: Request):
     async for session in _db(request):
+        await _check_duplicate(session, body.name, body.registration_number)
         result = await session.execute(
             text("""
                 INSERT INTO companies (name, registration_number, address, phone, email, notes)
@@ -58,6 +80,19 @@ async def update_company(company_id: UUID, body: CompanyUpdate, request: Request
         updates = {k: v for k, v in body.model_dump().items() if v is not None}
         if not updates:
             raise HTTPException(status_code=400, detail="No fields to update")
+        if "name" in updates or "registration_number" in updates:
+            cur = (await session.execute(
+                text("SELECT name, registration_number FROM companies WHERE id = :id"),
+                {"id": str(company_id)},
+            )).mappings().one_or_none()
+            if not cur:
+                raise HTTPException(status_code=404, detail="Company not found")
+            await _check_duplicate(
+                session,
+                updates.get("name", cur["name"]),
+                updates.get("registration_number", cur["registration_number"]),
+                exclude_id=company_id,
+            )
 
         set_clause = ", ".join(f"{k} = :{k}" for k in updates)
         updates["id"] = str(company_id)

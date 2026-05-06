@@ -667,7 +667,17 @@ async function saveInlineCompany() {
     toggleInlineCompanyForm();
     toast(`「${name}」を登録して選択しました`, "success");
   } catch (e) {
-    toast("会社の登録に失敗しました: " + e.message, "error");
+    if (e.message.includes("会社名")) {
+      const err = document.getElementById("inline-company-name-error");
+      if (err) { err.textContent = e.message; err.style.display = "block"; }
+      document.getElementById("inline-company-name")?.focus();
+    } else if (e.message.includes("登録番号")) {
+      const err = document.getElementById("inline-company-reg-error");
+      if (err) { err.textContent = e.message; err.style.display = "block"; }
+      document.getElementById("inline-company-reg")?.focus();
+    } else {
+      toast("会社の登録に失敗しました: " + e.message, "error");
+    }
   } finally {
     btn.disabled = false;
   }
