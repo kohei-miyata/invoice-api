@@ -150,6 +150,8 @@ function initCompanySearch(inputId, hiddenId, dropdownId) {
     if (hiddenId === "detail-company-id") {
       const err = document.getElementById("detail-company-error");
       if (err) { err.style.display = "none"; err.textContent = ""; }
+      const form = document.getElementById("inline-company-form");
+      if (form) form.style.display = "none";
     }
     e.preventDefault();
   });
