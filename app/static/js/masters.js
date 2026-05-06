@@ -186,12 +186,11 @@ async function saveMaster() {
 
   const regErr = document.getElementById("m-reg-num-error");
   if (body.registration_number && !REG_NUM_RE.test(body.registration_number)) {
-    regErr.textContent  = "「T」＋13桁の数字で入力してください（例：T1234567890123）";
-    regErr.style.display = "block";
+    if (regErr) { regErr.textContent = "「T」＋13桁の数字で入力してください（例：T1234567890123）"; regErr.style.display = "block"; }
     document.getElementById("m-reg-num").focus();
     return;
   }
-  regErr.style.display = "none";
+  if (regErr) regErr.style.display = "none";
 
   const btn = document.getElementById("master-save-btn");
   btn.disabled = true;
