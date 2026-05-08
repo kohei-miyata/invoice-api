@@ -219,16 +219,17 @@ function renderInvoices() {
   const start = (currentPage - 1) * PAGE_SIZE;
   const pageItems = filteredList.slice(start, start + PAGE_SIZE);
 
-  tbody.innerHTML = pageItems.map(inv => {
+  tbody.innerHTML = pageItems.map((inv, i) => {
     const co = companiesList.find(c => String(c.id) === String(inv.company_id));
     const coCell = co
       ? `<span class="company-tag">${esc(co.name)}</span>`
       : `<span class="company-tag company-tag-none">未紐付け</span>`;
+    const seq = start + i + 1;
     return `
     <tr>
       <td class="col-hide-mobile"><input type="checkbox" class="row-check" value="${inv.id}"></td>
       <td class="truncate" title="${esc(inv.original_filename || "")}">
-        ${esc(inv.original_filename || inv.id.slice(0,8) + "...")}
+        <span style="color:var(--text-muted,#888);font-size:11px;margin-right:4px;">${seq}.</span>${esc(inv.original_filename || inv.id.slice(0,8) + "...")}
       </td>
       <td class="col-hide-mobile">${esc(inv.extracted_data?.document_type || "—")}</td>
       <td>${statusBadge(inv.status)}</td>
