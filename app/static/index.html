@@ -150,6 +150,7 @@
             <select class="filter-select" id="invoice-status-filter" onchange="loadInvoices(this.value)">
               <option value="">すべてのステータス</option>
               <option value="processed">解析済</option>
+              <option value="approved">承認済</option>
             </select>
             <div class="spacer"></div>
             <button class="btn btn-outline" onclick="downloadCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -464,6 +465,7 @@
             <label>ステータス</label>
             <select id="detail-status">
               <option value="processed">解析済</option>
+              <option value="approved">承認済</option>
             </select>
           </div>
         </div>
@@ -554,6 +556,7 @@
           <label>ステータス</label>
           <select id="ei-status">
             <option value="processed">解析済</option>
+            <option value="approved">承認済</option>
           </select>
         </div>
         <div class="form-group">
