@@ -10,6 +10,8 @@ let companiesList    = [];
 let pendingUploadFile    = null;
 let pendingOverwriteId   = null;
 let detailSaved          = false;
+let liShowTaxCol         = false;
+let liUniformRate        = null;
 const PAGE_SIZE = 20;
 const BATCH_MAX  = 50;
 
@@ -509,6 +511,11 @@ function renderInvoiceDetail(inv) {
   document.getElementById("detail-title").textContent = inv.original_filename || "請求書詳細";
 
   const d = inv.extracted_data || {};
+  const _liItems    = d.line_items || [];
+  const _taxRates   = [...new Set(_liItems.map(li => li.tax_rate).filter(r => r != null && r !== "").map(Number))];
+  liShowTaxCol  = _taxRates.length > 1;
+  liUniformRate = _taxRates.length === 1 ? _taxRates[0] : null;
+
   document.getElementById("detail-body").innerHTML = `
     <div class="detail-meta-row">
       <span class="detail-meta-label">UUID</span>
@@ -546,22 +553,31 @@ function renderInvoiceDetail(inv) {
         <input type="text" inputmode="numeric" id="di-total-amount" value="${d.total_amount != null ? Number(d.total_amount).toLocaleString('ja-JP') : ''}">
       </div>
     </div>
-    <div style="margin-bottom:12px;">
+    <div style="margin-bottom:12px;" id="di-line-items-wrap">
       <div class="detail-meta-label" style="display:block;margin-bottom:6px;">明細</div>
       <table class="line-items-table" id="di-line-items-table">
-        <thead><tr><th>品目</th><th style="width:60px">数量</th><th style="width:90px">単価</th><th style="width:90px">金額</th><th style="width:28px"></th></tr></thead>
+        <thead><tr>
+          <th>品目</th>
+          <th style="width:60px">数量</th>
+          <th style="width:96px">単価</th>
+          ${liShowTaxCol ? '<th style="width:80px">税率</th>' : ""}
+          <th style="width:100px">金額</th>
+          <th style="width:28px"></th>
+        </tr></thead>
         <tbody>
-          ${(d.line_items || []).map(li => `
+          ${_liItems.map(li => `
             <tr>
               <td><input type="text" class="li-desc" value="${esc(li.description || '')}"></td>
-              <td><input type="number" class="li-qty" value="${li.quantity ?? ''}"></td>
-              <td><input type="number" class="li-unit-price" value="${li.unit_price ?? ''}"></td>
-              <td><input type="number" class="li-amount" value="${li.amount ?? ''}"></td>
+              <td><input type="text" inputmode="numeric" class="li-qty" value="${li.quantity ?? ''}"></td>
+              <td><input type="text" inputmode="numeric" class="li-unit-price" value="${li.unit_price != null ? Number(li.unit_price).toLocaleString('ja-JP') : ''}"></td>
+              ${liShowTaxCol ? `<td style="white-space:nowrap;"><input type="text" inputmode="numeric" class="li-tax-rate" value="${li.tax_rate ?? ''}" style="width:46px;display:inline-block;"> <span style="font-size:12px;">%</span></td>` : ""}
+              <td><input type="text" inputmode="numeric" class="li-amount" value="${li.amount != null ? Number(li.amount).toLocaleString('ja-JP') : ''}" readonly style="background:var(--surface-2,#f5f5f5);cursor:default;"></td>
               <td><button type="button" class="li-del-btn" onclick="removeLineItem(this)" title="削除">×</button></td>
             </tr>
           `).join("")}
         </tbody>
       </table>
+      <div id="di-line-summary"></div>
       <button type="button" class="btn btn-outline btn-sm" style="margin-top:6px;" onclick="addLineItem()">＋ 行を追加</button>
     </div>
     <div class="form-group" style="margin-bottom:0;">
@@ -601,6 +617,46 @@ function renderInvoiceDetail(inv) {
       if (id === "di-subtotal" || id === "di-tax-amount") recalcTotal();
     });
   });
+
+  // Line items: qty/unit_price → auto-calc amount → auto-calc subtotal
+  const liTbody = document.querySelector("#di-line-items-table tbody");
+  if (liTbody) {
+    liTbody.addEventListener("focusin", e => {
+      if (e.target.classList.contains("li-unit-price"))
+        e.target.value = e.target.value.replace(/,/g, "");
+    });
+    liTbody.addEventListener("focusout", e => {
+      if (e.target.classList.contains("li-unit-price")) {
+        const n = Number(e.target.value);
+        if (e.target.value !== "" && !isNaN(n)) e.target.value = n.toLocaleString("ja-JP");
+        recalcSubtotal();
+      }
+    });
+    liTbody.addEventListener("input", e => {
+      const tr = e.target.closest("tr");
+      if (!tr) return;
+      if (e.target.classList.contains("li-unit-price"))
+        e.target.value = e.target.value.replace(/[^\d]/g, "");
+      else if (e.target.classList.contains("li-qty"))
+        e.target.value = e.target.value.replace(/[^\d.]/g, "");
+      if (e.target.classList.contains("li-qty") || e.target.classList.contains("li-unit-price")) {
+        const qtyRaw   = tr.querySelector(".li-qty")?.value || "";
+        const priceRaw = (tr.querySelector(".li-unit-price")?.value || "").replace(/,/g, "");
+        const amtEl    = tr.querySelector(".li-amount");
+        if (amtEl && qtyRaw !== "" && priceRaw !== "") {
+          const amt = Number(qtyRaw) * Number(priceRaw);
+          amtEl.value = isNaN(amt) ? "" : amt.toLocaleString("ja-JP");
+        }
+        recalcSubtotal();
+      }
+      if (e.target.classList.contains("li-tax-rate")) {
+        e.target.value = e.target.value.replace(/[^\d.]/g, "");
+        renderLineItemSummary();
+      }
+    });
+  }
+
+  renderLineItemSummary();
 
   // Auto-fill total on open if missing
   const totalEl = document.getElementById("di-total-amount");
@@ -683,6 +739,77 @@ async function saveInlineCompany() {
   }
 }
 
+function recalcSubtotal() {
+  const sum = [...document.querySelectorAll("#di-line-items-table tbody tr")].reduce((acc, tr) => {
+    return acc + (Number((tr.querySelector(".li-amount")?.value || "").replace(/,/g, "")) || 0);
+  }, 0);
+  const el = document.getElementById("di-subtotal");
+  if (el && sum > 0) {
+    el.value = sum.toLocaleString("ja-JP");
+    recalcTotal();
+  }
+  renderLineItemSummary();
+}
+
+function renderLineItemSummary() {
+  const el = document.getElementById("di-line-summary");
+  if (!el) return;
+  const rows = [...document.querySelectorAll("#di-line-items-table tbody tr")];
+  if (!rows.length) { el.innerHTML = ""; return; }
+
+  const byRate = {};
+  let totalExcl = 0;
+  rows.forEach(tr => {
+    const amt = Number((tr.querySelector(".li-amount")?.value || "").replace(/,/g, "")) || 0;
+    totalExcl += amt;
+    const rateEl  = tr.querySelector(".li-tax-rate");
+    const rateVal = rateEl ? rateEl.value.trim()
+                           : (liUniformRate != null ? String(liUniformRate) : "");
+    if (rateVal !== "" && !isNaN(Number(rateVal))) {
+      byRate[rateVal] = (byRate[rateVal] || 0) + amt;
+    }
+  });
+
+  const fmt = n => "¥" + Math.round(n).toLocaleString("ja-JP");
+  const rateEntries = Object.entries(byRate).sort((a, b) => Number(b[0]) - Number(a[0]));
+  let totalTax = 0;
+  const rateRows = rateEntries.map(([rate, base]) => {
+    const tax = Math.round(base * Number(rate) / 100);
+    totalTax += tax;
+    return `<tr>
+      <td style="padding:2px 8px;color:var(--text-muted,#888);">${rate}%対象</td>
+      <td style="padding:2px 8px;text-align:right;">${fmt(base)}</td>
+      <td style="padding:2px 8px;color:var(--text-muted,#888);">消費税</td>
+      <td style="padding:2px 8px;text-align:right;">${fmt(tax)}</td>
+    </tr>`;
+  }).join("");
+
+  const totalIncl = totalExcl + totalTax;
+  el.innerHTML = `<table style="margin-left:auto;margin-top:8px;border-collapse:collapse;font-size:12px;">
+    ${rateRows}
+    <tr style="border-top:1px solid var(--border,#e5e7eb);">
+      <td colspan="3" style="padding:4px 8px;font-weight:600;">税抜合計</td>
+      <td style="padding:4px 8px;text-align:right;font-weight:600;">${fmt(totalExcl)}</td>
+    </tr>
+    ${totalTax > 0 ? `
+    <tr>
+      <td colspan="3" style="padding:2px 8px;color:var(--text-muted,#888);">消費税合計</td>
+      <td style="padding:2px 8px;text-align:right;color:var(--text-muted,#888);">${fmt(totalTax)}</td>
+    </tr>
+    <tr style="border-top:1px solid var(--border,#e5e7eb);">
+      <td colspan="3" style="padding:4px 8px;font-weight:700;">税込合計</td>
+      <td style="padding:4px 8px;text-align:right;font-weight:700;">${fmt(totalIncl)}</td>
+    </tr>` : ""}
+  </table>`;
+
+  // Sync upper 消費税 field
+  if (totalTax > 0) {
+    const taxEl = document.getElementById("di-tax-amount");
+    if (taxEl) taxEl.value = totalTax.toLocaleString("ja-JP");
+    recalcTotal();
+  }
+}
+
 function recalcTotal() {
   const sub = Number((document.getElementById("di-subtotal")?.value || "").replace(/,/g, "")) || 0;
   const tax = Number((document.getElementById("di-tax-amount")?.value || "").replace(/,/g, "")) || 0;
@@ -739,6 +866,7 @@ async function saveDetailEdit() {
     description: tr.querySelector(".li-desc")?.value.trim() || null,
     quantity:    toN(tr.querySelector(".li-qty")?.value),
     unit_price:  toN(tr.querySelector(".li-unit-price")?.value),
+    tax_rate:    toN(tr.querySelector(".li-tax-rate")?.value),
     amount:      toN(tr.querySelector(".li-amount")?.value),
   })).filter(li => li.description || li.amount != null);
 
@@ -781,9 +909,10 @@ function addLineItem() {
   const tr = document.createElement("tr");
   tr.innerHTML = `
     <td><input type="text" class="li-desc" value=""></td>
-    <td><input type="number" class="li-qty" value=""></td>
-    <td><input type="number" class="li-unit-price" value=""></td>
-    <td><input type="number" class="li-amount" value=""></td>
+    <td><input type="text" inputmode="numeric" class="li-qty" value=""></td>
+    <td><input type="text" inputmode="numeric" class="li-unit-price" value=""></td>
+    ${liShowTaxCol ? '<td style="white-space:nowrap;"><input type="text" inputmode="numeric" class="li-tax-rate" value="" style="width:46px;display:inline-block;"> <span style="font-size:12px;">%</span></td>' : ""}
+    <td><input type="text" inputmode="numeric" class="li-amount" value="" readonly style="background:var(--surface-2,#f5f5f5);cursor:default;"></td>
     <td><button type="button" class="li-del-btn" onclick="removeLineItem(this)" title="削除">×</button></td>
   `;
   tbody.appendChild(tr);
@@ -792,6 +921,7 @@ function addLineItem() {
 
 function removeLineItem(btn) {
   btn.closest("tr").remove();
+  recalcSubtotal();
 }
 
 /* ── Edit modal ──────────────────────────────────────────────── */

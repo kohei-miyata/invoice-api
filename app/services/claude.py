@@ -38,7 +38,8 @@ _EXTRACT_SYSTEM = """あなたは請求書・領収書のデータ抽出専門AI
       "description": "品目説明",
       "quantity": 数量(数値),
       "unit_price": 単価(数値),
-      "amount": 金額(数値)
+      "amount": 金額(数値),
+      "tax_rate": 税率（数値、例: 10 や 8。記載がなければnull）
     }
   ],
   "notes": "備考"
