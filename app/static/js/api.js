@@ -68,6 +68,7 @@ const api = {
   deleteApproval: (id)         => request("DELETE", `/api/approvals/${id}`),
 
   // Admin
+  getDashboard:     ()           => request("GET",    "/api/admin/dashboard"),
   listUsers:        ()           => request("GET",    "/api/admin/users"),
   createUser:       (body)       => request("POST",   "/api/admin/users", body),
   updateUser:       (id, body)   => request("PUT",    `/api/admin/users/${id}`, body),

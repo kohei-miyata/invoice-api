@@ -144,3 +144,68 @@ async def list_tenants(request: Request):
         )).mappings().all()
         return [{"slug": r["slug"], "name": r["name"]} for r in rows]
 
+
+@router.get("/dashboard")
+async def admin_dashboard(request: Request):
+    _require_admin(request)
+    async with AsyncSessionLocal() as session:
+        tenants = (await session.execute(
+            text("SELECT slug, name, created_at FROM public.tenants ORDER BY name")
+        )).mappings().all()
+
+        result = []
+        for t in tenants:
+            slug = t["slug"]
+            schema = f"tenant_{slug}"
+
+            try:
+                status_rows = (await session.execute(
+                    text(f'SELECT status, COUNT(*) AS cnt FROM "{schema}".invoices GROUP BY status')
+                )).mappings().all()
+                status_counts = {r["status"]: r["cnt"] for r in status_rows}
+                total_invoices = sum(status_counts.values())
+
+                token_row = (await session.execute(
+                    text(f"""SELECT
+                            COALESCE(SUM(ai_input_tokens), 0)  AS input_tokens,
+                            COALESCE(SUM(ai_output_tokens), 0) AS output_tokens,
+                            COUNT(*) FILTER (WHERE ai_input_tokens > 0 OR ai_output_tokens > 0) AS ai_processed
+                         FROM "{schema}".invoices""")
+                )).mappings().one()
+
+                company_count = (await session.execute(
+                    text(f'SELECT COUNT(*) AS cnt FROM "{schema}".companies')
+                )).scalar()
+
+                last_upload = (await session.execute(
+                    text(f'SELECT MAX(created_at) AS last FROM "{schema}".invoices')
+                )).scalar()
+
+            except Exception:
+                status_counts = {}
+                total_invoices = 0
+                token_row = {"input_tokens": 0, "output_tokens": 0, "ai_processed": 0}
+                company_count = 0
+                last_upload = None
+
+            user_count = (await session.execute(
+                text("SELECT COUNT(*) FROM public.user_tenants WHERE tenant_slug = :slug"),
+                {"slug": slug},
+            )).scalar()
+
+            result.append({
+                "slug": slug,
+                "name": t["name"],
+                "created_at": t["created_at"].isoformat() if t["created_at"] else None,
+                "total_invoices": total_invoices,
+                "status_counts": status_counts,
+                "ai_processed": token_row["ai_processed"],
+                "input_tokens": token_row["input_tokens"],
+                "output_tokens": token_row["output_tokens"],
+                "company_count": company_count,
+                "user_count": user_count,
+                "last_upload": last_upload.isoformat() if last_upload else None,
+            })
+
+        return result
+
