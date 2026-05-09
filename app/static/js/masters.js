@@ -111,12 +111,12 @@ function renderMasters(list) {
   tbody.innerHTML = list.map(c => `
     <tr>
       <td class="truncate" title="${esc(c.name)}">${esc(c.name)}</td>
-      <td>${esc(c.registration_number || "—")}</td>
-      <td class="truncate" title="${esc(c.address || "")}">${esc(c.address || "—")}</td>
-      <td>${esc(c.phone || "—")}</td>
-      <td>${esc(c.email || "—")}</td>
-      <td>
-        <div class="flex gap-2">
+      <td class="col-hide-mobile">${esc(c.registration_number || "—")}</td>
+      <td class="col-hide-mobile truncate" title="${esc(c.address || "")}">${esc(c.address || "—")}</td>
+      <td class="col-hide-mobile">${esc(c.phone || "—")}</td>
+      <td class="col-hide-mobile">${esc(c.email || "—")}</td>
+      <td class="text-right">
+        <div class="flex gap-2" style="justify-content:flex-end;">
           <button class="btn btn-outline btn-sm" onclick="openEditMaster('${c.id}')">編集</button>
           <button class="btn btn-danger btn-sm" onclick="deleteMaster('${c.id}', '${esc(c.name)}')">削除</button>
         </div>

@@ -171,7 +171,7 @@
               <option value="approved">承認済</option>
             </select>
             <div class="spacer"></div>
-            <button class="btn btn-outline" onclick="downloadCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+            <button class="btn btn-outline col-hide-mobile" onclick="downloadCSV()"><svg xmlns="http://www.w3.org/2000/svg" width="16"
                 height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
@@ -192,7 +192,7 @@
                   <th style="min-width:100px;">合計金額</th>
                   <th style="min-width:90px;" class="col-hide-mobile">登録日</th>
                   <th style="min-width:70px;" class="col-hide-mobile">ストレージ</th>
-                  <th style="min-width:160px;">操作</th>
+                  <th class="text-right">操作</th>
                 </tr>
               </thead>
               <tbody id="invoices-tbody">
@@ -229,12 +229,12 @@
               <input type="text" placeholder="会社名・登録番号で検索..." id="master-search" oninput="filterMasters()" />
             </div>
             <div class="spacer"></div>
-            <button class="btn btn-outline" onclick="downloadSampleCSV()"><svg xmlns="http://www.w3.org/2000/svg"
+            <button class="btn btn-outline col-hide-mobile" onclick="downloadSampleCSV()"><svg xmlns="http://www.w3.org/2000/svg"
                 width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
                   d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg> サンプルCSV</button>
-            <label class="btn btn-outline" style="cursor:pointer;">
+            <label class="btn btn-outline col-hide-mobile" style="cursor:pointer;">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24"
                 stroke-width="1.5" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -251,11 +251,11 @@
               <thead>
                 <tr>
                   <th>会社名</th>
-                  <th>登録番号</th>
-                  <th>住所</th>
-                  <th>電話番号</th>
-                  <th>メール</th>
-                  <th>操作</th>
+                  <th class="col-hide-mobile">登録番号</th>
+                  <th class="col-hide-mobile">住所</th>
+                  <th class="col-hide-mobile">電話番号</th>
+                  <th class="col-hide-mobile">メール</th>
+                  <th class="text-right">操作</th>
                 </tr>
               </thead>
               <tbody id="masters-tbody">
@@ -472,11 +472,11 @@
               <thead>
                 <tr>
                   <th>名前</th>
-                  <th>メールアドレス</th>
+                  <th class="col-hide-mobile">メールアドレス</th>
                   <th>ロール</th>
-                  <th>テナント</th>
-                  <th>ステータス</th>
-                  <th>操作</th>
+                  <th class="col-hide-mobile">テナント</th>
+                  <th class="col-hide-mobile">ステータス</th>
+                  <th class="text-right">操作</th>
                 </tr>
               </thead>
               <tbody id="users-tbody">
@@ -484,6 +484,8 @@
               </tbody>
             </table>
           </div>
+          <div id="users-pagination" class="pagination"></div>
+        </div>
       </div><!-- /page-users -->
 
     </div><!-- /content -->

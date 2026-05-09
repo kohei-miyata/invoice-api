@@ -787,11 +787,10 @@ input[type="checkbox"] {
   .toolbar .spacer { display: none; }
   .search-box { flex: 1 1 100%; order: -1; }
   .search-box input { width: 100%; min-width: 0; }
-  .filter-select { flex: 1; }
+  .filter-select { flex: 1; min-width: 0; max-width: 160px; }
 
-  /* Table: hide non-essential columns, no horizontal scroll */
+  /* Table: hide non-essential columns */
   .col-hide-mobile { display: none; }
-  .table-wrap { overflow-x: visible; }
   table { font-size: 13px; }
   thead th { padding: 9px 10px; }
   tbody td { padding: 10px 10px; }
@@ -836,6 +835,12 @@ input[type="checkbox"] {
   .manual-hero h2 { font-size: 17px; }
   .manual-cards { grid-template-columns: 1fr; }
 }
+
+/* ── Utility ──────────────────────────────────────────────── */
+.flex { display: flex; }
+.gap-2 { gap: 8px; }
+.flex-wrap { flex-wrap: wrap; }
+.text-right { text-align: right; }
 
 /* ── Admin Dashboard ──────────────────────────────────────── */
 
@@ -978,6 +983,10 @@ input[type="checkbox"] {
   color: var(--text-muted);
   padding-top: 4px;
   border-top: 1px solid var(--border);
+}
+
+@media (max-width: 960px) {
+  .dashboard-summary { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {

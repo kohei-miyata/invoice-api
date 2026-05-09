@@ -238,8 +238,8 @@ function renderInvoices() {
       <td>${formatAmount(inv.extracted_data?.total_amount)}</td>
       <td class="col-hide-mobile">${formatDate(inv.created_at)}</td>
       <td class="col-hide-mobile"><button class="btn btn-outline btn-sm" onclick="openStorageUrl('${inv.id}')" title="ストレージで開く">${icons.link}</button></td>
-      <td>
-        <div class="flex gap-2">
+      <td class="text-right">
+        <div class="flex gap-2" style="justify-content:flex-end;">
           <button class="btn btn-outline btn-sm btn-icon" onclick="openInvoiceDetail('${inv.id}')" title="詳細">${icons.eye}</button>
           <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')">削除</button>
         </div>

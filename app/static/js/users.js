@@ -2,10 +2,13 @@
 
 let _users = [];
 let _adminTenants = [];
+let _usersPage = 1;
+const USERS_PAGE_SIZE = 20;
 
 async function loadUsers() {
   try {
     [_users, _adminTenants] = await Promise.all([api.listUsers(), api.listAdminTenants()]);
+    _usersPage = 1;
     renderUsersTable();
   } catch (e) {
     toast(e.message, "error");
@@ -16,9 +19,12 @@ function renderUsersTable() {
   const tbody = document.getElementById("users-tbody");
   if (!_users.length) {
     tbody.innerHTML = '<tr class="empty-row"><td colspan="6">ユーザーが登録されていません</td></tr>';
+    renderUsersPagination();
     return;
   }
-  tbody.innerHTML = _users.map(u => {
+  const start = (_usersPage - 1) * USERS_PAGE_SIZE;
+  const pageItems = _users.slice(start, start + USERS_PAGE_SIZE);
+  tbody.innerHTML = pageItems.map(u => {
     const roleBadge = u.role === "admin"
       ? '<span class="badge" style="background:#e9d8fd;color:#553c9a;">管理者</span>'
       : '<span class="badge badge-processed">ユーザー</span>';
@@ -29,16 +35,45 @@ function renderUsersTable() {
     return `
       <tr>
         <td>${esc(u.name || "—")}</td>
-        <td>${esc(u.email)}</td>
+        <td class="col-hide-mobile">${esc(u.email)}</td>
         <td>${roleBadge}</td>
-        <td style="font-size:12px;">${tenants}</td>
-        <td>${activeBadge}</td>
-        <td>
+        <td class="col-hide-mobile" style="font-size:12px;">${tenants}</td>
+        <td class="col-hide-mobile">${activeBadge}</td>
+        <td class="text-right">
           <button class="btn btn-ghost btn-sm" onclick="openEditUser('${u.id}')">編集</button>
           <button class="btn btn-ghost btn-sm" style="color:var(--danger,#e53e3e);" onclick="confirmDeleteUser('${u.id}', '${esc(u.name || u.email).replace(/'/g, "\\'")}')">削除</button>
         </td>
       </tr>`;
   }).join("");
+  renderUsersPagination();
+}
+
+function renderUsersPagination() {
+  const el = document.getElementById("users-pagination");
+  if (!el) return;
+  const totalPages = Math.ceil(_users.length / USERS_PAGE_SIZE);
+  if (totalPages <= 1) { el.innerHTML = ""; return; }
+  const start = (_usersPage - 1) * USERS_PAGE_SIZE + 1;
+  const end   = Math.min(_usersPage * USERS_PAGE_SIZE, _users.length);
+  el.innerHTML = `
+    <span>${start}–${end} / ${_users.length} 件</span>
+    <div class="pagination-controls">
+      <button class="btn btn-outline btn-sm" onclick="changeUsersPage(${_usersPage - 1})" ${_usersPage === 1 ? "disabled" : ""}>
+        ${icons.chevronLeft} 前へ
+      </button>
+      <span class="page-indicator">${_usersPage} / ${totalPages}</span>
+      <button class="btn btn-outline btn-sm" onclick="changeUsersPage(${_usersPage + 1})" ${_usersPage === totalPages ? "disabled" : ""}>
+        次へ ${icons.chevronRight}
+      </button>
+    </div>
+  `;
+}
+
+function changeUsersPage(page) {
+  const totalPages = Math.ceil(_users.length / USERS_PAGE_SIZE);
+  if (page < 1 || page > totalPages) return;
+  _usersPage = page;
+  renderUsersTable();
 }
 
 function openCreateUser() {
