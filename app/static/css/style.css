@@ -1,6 +1,6 @@
 /* ── Reset & Variables ─────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { overflow-x: hidden; }
+html, body { overflow-x: hidden; max-width: 100%; }
 
 :root {
   --bg: #f0f2f5;
@@ -110,7 +110,7 @@ body {
 .topbar h2 { font-size: 17px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
 .topbar .actions { display: flex; gap: 8px; align-items: center; }
 
-.content { padding: 24px 28px; }
+.content { padding: 24px 28px; max-width: 100%; overflow-x: hidden; }
 
 /* ── Cards ─────────────────────────────────────────────────────── */
 .card {
@@ -765,10 +765,21 @@ input[type="checkbox"] {
 
   /* Topbar */
   .topbar { padding: 10px 14px; gap: 10px; }
-  .topbar h2 { font-size: 15px; }
+  .topbar h2 { font-size: 16px; }
 
   /* Content padding */
   .content { padding: 14px; }
+
+  /* Base font size */
+  body { font-size: 15px; }
+  table { font-size: 14px; }
+  .nav-item { font-size: 15px; }
+  .badge { font-size: 12.5px; }
+  .btn { font-size: 14px; }
+  .label, .stat-card .label { font-size: 13px; }
+  .stat-card .value { font-size: 24px; }
+  .form-group label { font-size: 14px; }
+  input, select, textarea { font-size: 15px; }
 
   /* Stats: 2-column grid */
   .stats {
