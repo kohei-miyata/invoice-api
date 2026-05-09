@@ -182,6 +182,7 @@ async def admin_dashboard(request: Request):
                 )).scalar()
 
             except Exception:
+                await session.rollback()
                 status_counts = {}
                 total_invoices = 0
                 token_row = {"input_tokens": 0, "output_tokens": 0, "ai_processed": 0}
