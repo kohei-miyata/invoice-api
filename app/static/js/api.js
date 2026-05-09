@@ -7,17 +7,23 @@ function getTenant() {
 }
 
 function headers(extra = {}) {
+  const token = getToken();
   return {
     "X-Tenant-Slug": getTenant(),
     "Content-Type": "application/json",
+    ...(token ? { "Authorization": `Bearer ${token}` } : {}),
     ...extra,
   };
 }
 
 async function request(method, path, body = null, isFormData = false) {
   const opts = { method };
+  const token = getToken();
   if (isFormData) {
-    opts.headers = { "X-Tenant-Slug": getTenant() };
+    opts.headers = {
+      "X-Tenant-Slug": getTenant(),
+      ...(token ? { "Authorization": `Bearer ${token}` } : {}),
+    };
     opts.body = body;
   } else {
     opts.headers = headers();
@@ -25,10 +31,11 @@ async function request(method, path, body = null, isFormData = false) {
   }
 
   const res = await fetch(BASE + path, opts);
+  if (res.status === 401) { logout(); return; }
   if (res.status === 204) return null;
 
   const data = await res.json().catch(() => ({ detail: res.statusText }));
-  if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+  if (!res.ok) throw new Error(data.detail || `エラーが発生しました（${res.status}）`);
   return data;
 }
 
@@ -59,4 +66,11 @@ const api = {
   createApproval: (body)       => request("POST",   "/api/approvals", body),
   updateApproval: (id, body)   => request("PUT",    `/api/approvals/${id}`, body),
   deleteApproval: (id)         => request("DELETE", `/api/approvals/${id}`),
+
+  // Admin
+  listUsers:        ()           => request("GET",    "/api/admin/users"),
+  createUser:       (body)       => request("POST",   "/api/admin/users", body),
+  updateUser:       (id, body)   => request("PUT",    `/api/admin/users/${id}`, body),
+  deleteUser:       (id)         => request("DELETE", `/api/admin/users/${id}`),
+  listAdminTenants: ()           => request("GET",    "/api/admin/tenants"),
 };

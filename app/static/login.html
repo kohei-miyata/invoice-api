@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ログイン — 請求書管理</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <style>
+    body { display:flex; align-items:center; justify-content:center; min-height:100vh; background:var(--bg); }
+    .login-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px;
+      padding:40px; width:100%; max-width:400px; box-shadow:0 4px 24px rgba(0,0,0,.08);
+    }
+    .login-logo { text-align:center; margin-bottom:28px; }
+    .login-logo h1 { font-size:20px; font-weight:700; color:var(--text); margin:0; }
+    .login-logo p  { font-size:13px; color:var(--text-muted); margin:4px 0 0; }
+    .login-card .form-group { margin-bottom:16px; }
+    .login-card label { display:block; font-size:13px; font-weight:500; margin-bottom:6px; color:var(--text); }
+    .login-card input { width:100%; box-sizing:border-box; }
+    .login-btn { width:100%; margin-top:8px; padding:10px; font-size:14px; font-weight:600; }
+    #login-error { display:none; color:var(--danger,#e53e3e); font-size:13px; margin-top:8px; text-align:center; }
+    .pw-wrap { position:relative; }
+    .pw-wrap input { padding-right:40px; }
+    .pw-toggle { position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; padding:2px; color:var(--text-muted); display:flex; align-items:center; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <div class="login-logo">
+      <h1>請求書管理システム</h1>
+      <p>アカウントにログインしてください</p>
+    </div>
+    <form id="login-form" onsubmit="return false;">
+      <div class="form-group">
+        <label>メールアドレス</label>
+        <input type="email" id="login-email" placeholder="example@company.com" autocomplete="email" required />
+      </div>
+      <div class="form-group">
+        <label>パスワード</label>
+        <div class="pw-wrap">
+          <input type="password" id="login-password" placeholder="パスワード" autocomplete="current-password" required />
+          <button type="button" class="pw-toggle" onclick="togglePw('login-password', this)" tabindex="-1">
+            <svg id="login-pw-eye" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>
+          </button>
+        </div>
+      </div>
+      <p id="login-error"></p>
+      <button type="submit" class="btn btn-primary login-btn" id="login-btn">ログイン</button>
+    </form>
+  </div>
+  <script>
+    function togglePw(inputId, btn) {
+      const input = document.getElementById(inputId);
+      const showing = input.type === "text";
+      input.type = showing ? "password" : "text";
+      btn.innerHTML = showing
+        ? `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/></svg>`
+        : `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"/></svg>`;
+    }
+
+    // Already logged in → redirect
+    if (localStorage.getItem("auth_token")) {
+      window.location.replace("/invoices");
+    }
+
+    document.getElementById("login-form").addEventListener("submit", async () => {
+      const email    = document.getElementById("login-email").value.trim();
+      const password = document.getElementById("login-password").value;
+      const errEl    = document.getElementById("login-error");
+      const btn      = document.getElementById("login-btn");
+
+      errEl.style.display = "none";
+      btn.disabled = true;
+      btn.textContent = "ログイン中...";
+
+      try {
+        const res = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "ログインに失敗しました");
+
+        localStorage.setItem("auth_token", data.access_token);
+        localStorage.setItem("auth_user",  JSON.stringify(data.user));
+        window.location.replace("/invoices");
+      } catch (e) {
+        errEl.textContent = e.message;
+        errEl.style.display = "block";
+        btn.disabled = false;
+        btn.textContent = "ログイン";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -111,3 +111,51 @@ class Approval(ApprovalBase):
 class TenantProvision(BaseModel):
     slug: str
     name: str
+
+
+# ── Auth / User ───────────────────────────────────────────────────────────────
+
+class TenantInfo(BaseModel):
+    slug: str
+    name: str
+
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str
+    name: Optional[str] = None
+    role: str = "user"
+    tenant_slugs: List[str] = []
+
+
+class UserUpdate(BaseModel):
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+    name: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
+    tenant_slugs: Optional[List[str]] = None
+
+
+class UserResponse(BaseModel):
+    id: UUID
+    email: str
+    name: Optional[str] = None
+    role: str
+    is_active: bool
+    tenants: List[TenantInfo] = []
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
