@@ -779,7 +779,7 @@ input[type="checkbox"] {
   .label, .stat-card .label { font-size: 13px; }
   .stat-card .value { font-size: 24px; }
   .form-group label { font-size: 14px; }
-  input, select, textarea { font-size: 16px; }
+  input, select, textarea { font-size: 16px !important; }
 
   /* Stats: 2-column grid */
   .stats {
